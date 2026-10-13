@@ -1,7 +1,7 @@
 ---
 import '../styles/tailwind.css';
 import '../styles/global.css';
-import { site } from '../config/site';
+import { credits, site } from '../config/site';
 
 interface Props {
   title?: string;
@@ -33,6 +33,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
+    {credits.map((c) => <meta name="attribution" content={`"${c.work}" by ${c.author} (${c.href}), ${c.license} (${c.licenseHref})`} />)}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

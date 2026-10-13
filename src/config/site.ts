@@ -13,7 +13,10 @@ export type Project = {
   links?: Link[];
 };
 
-/** Third-party assets that require attribution. */
+/**
+ * Third-party assets that require attribution. Currently only emitted as
+ * <meta name="attribution"> (Base.astro); CC BY expects a visible credit.
+ */
 export type Credit = { work: string; author: string; href: string; license: string; licenseHref: string };
 
 export const site = {

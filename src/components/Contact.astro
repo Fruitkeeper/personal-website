@@ -1,5 +1,5 @@
 ---
-import { contact, credits } from '../config/site';
+import { contact } from '../config/site';
 
 type Icon = 'github' | 'linkedin' | 'x' | 'mail';
 const links: { label: string; href: string; icon: Icon; external: boolean }[] = [
@@ -49,30 +49,11 @@ const paths: Record<Exclude<Icon, 'mail'>, string> = {
         </li>
       ))
     }
-    {
-      credits.length > 0 && (
-        <li style={`--i: ${links.length}`}>
-          <button type="button" class="info" popovertarget="credits" aria-label="Credits">i</button>
-        </li>
-      )
-    }
   </ul>
 </nav>
 
 <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
 
-{
-  credits.length > 0 && (
-    <div id="credits" popover class="credits">
-      {credits.map((c) => (
-        <p>
-          3D model: “<a href={c.href} target="_blank" rel="noopener">{c.work}</a>” by {c.author},{' '}
-          <a href={c.licenseHref} target="_blank" rel="noopener license">{c.license}</a>
-        </p>
-      ))}
-    </div>
-  )
-}
 
 <script>
   import { mountContact } from '../scripts/contact';
@@ -114,7 +95,7 @@ const paths: Record<Exclude<Icon, 'mail'>, string> = {
   li { animation: dock-in 0.6s var(--ease-out) both; animation-delay: calc(0.6s + var(--i) * 80ms); }
   @keyframes dock-in { from { opacity: 0; transform: translateX(24px) scale(0.6); } }
 
-  .btn, .info {
+  .btn {
     position: relative;
     display: grid;
     place-items: center;
@@ -176,29 +157,7 @@ const paths: Record<Exclude<Icon, 'mail'>, string> = {
   .btn:hover .label, .btn:focus-visible .label, .btn[data-copied] .label { opacity: 1; transform: translate(0, -50%); }
   .btn[data-copied] .label { color: var(--accent-2); }
 
-  .info {
-    width: 1.9rem;
-    height: 1.9rem;
-    font: italic 600 0.8rem/1 Georgia, serif;
-    cursor: pointer;
-    opacity: 0.55;
-  }
-  .info:hover, .info:focus-visible { opacity: 1; color: var(--text); }
 
-  /* Popovers render in the top layer; anchor beside the dock. */
-  .credits {
-    inset: auto 5rem 1.5rem auto;
-    margin: 0;
-    max-width: 20rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    background: rgb(16 16 26 / 0.95);
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-  .credits p { margin: 0; }
-  .credits a { color: var(--accent-2); }
 
   @media (max-width: 600px) {
     .btn { width: 2.5rem; height: 2.5rem; }
