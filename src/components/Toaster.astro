@@ -17,6 +17,8 @@
   .stage {
     position: fixed;
     inset: 0;
+    /* Orbit items sit at z 0 (behind) or z 2 (in front) — see scripts/orbit.ts. */
+    z-index: 1;
     display: grid;
     place-items: center;
   }

@@ -1,6 +1,6 @@
 # Personal website
 
-A single full-screen page: a 3D sad toaster robot (Three.js) whose head follows your cursor. Built with Astro; deployed on Vercel.
+A single full-screen page: a 3D sad toaster robot (Three.js) whose head follows your cursor, with projects orbiting around it and a contact dock in the corner. Built with Astro; deployed on Vercel.
 
 > The earlier full site (header, projects, blog, about, RSS) is preserved at the git tag `full-site-before-strip`:
 > `git checkout full-site-before-strip -- src tests` restores its files.
@@ -15,6 +15,19 @@ A single full-screen page: a 3D sad toaster robot (Three.js) whose head follows 
 | `npm run verify`      | check + test + production build                  |
 | `npm run build`       | Build static site to `dist/`                     |
 | `npm run build:model` | Rebuild `public/models/sad-toaster.glb` from the source model |
+
+## Make it yours
+
+Everything personal is in `src/config/site.ts`:
+
+- `contact` — GitHub, LinkedIn, X, email. **LinkedIn and X are placeholders (`your-handle`).**
+- `projects` — the orbiting cards (title, one-line summary, description, tags, public links). 2–8 projects fit the orbit.
+- `credits` — attribution for third-party assets (shown via the ⓘ in the dock).
+
+## Pieces
+
+- **Orbit** (`src/components/Orbit.astro`, `src/scripts/orbit.ts`, math in `src/lib/orbit.ts`): projects ride a tilted ring around the toaster, passing behind and in front of it. Hover/focus or an open project stops it. Click opens a project dialog. Portrait phones get an upright ring. Reduced motion: static, all in front.
+- **Contact dock** (`src/components/Contact.astro`, `src/scripts/contact.ts`, math in `src/lib/magnet.ts`): magnetic buttons with a spinning gradient ring and slide-out labels. Clicking email copies the address (falls back to `mailto:`).
 
 ## The toaster
 

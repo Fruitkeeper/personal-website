@@ -1,0 +1,145 @@
+---
+import { projects } from '../config/site';
+import { slugify } from '../lib/slug';
+
+const items = projects.map((p) => ({ ...p, id: `project-${slugify(p.title)}` }));
+---
+
+<ul class="orbit" aria-label="Projects">
+  {
+    items.map((p) => (
+      <li class="orbit-item" data-orbit-item>
+        <button type="button" class="chip" aria-haspopup="dialog" aria-controls={p.id} data-open-dialog={p.id}>
+          <span class="chip-title">{p.title}</span>
+          <span class="chip-summary">{p.summary}</span>
+        </button>
+      </li>
+    ))
+  }
+</ul>
+
+{
+  items.map((p) => (
+    <dialog id={p.id} class="project" aria-labelledby={`${p.id}-title`}>
+      <form method="dialog">
+        <button class="close" aria-label="Close">×</button>
+      </form>
+      <h2 id={`${p.id}-title`}>{p.title}</h2>
+      <p>{p.description}</p>
+      <ul class="tags" aria-label="Technologies">
+        {p.tags.map((t) => <li>{t}</li>)}
+      </ul>
+      {p.links && p.links.length > 0 && (
+        <p class="links">
+          {p.links.map((l) => (
+            <a href={l.href} target="_blank" rel="noopener noreferrer">
+              {l.label} ↗
+            </a>
+          ))}
+        </p>
+      )}
+    </dialog>
+  ))
+}
+
+<script>
+  import { mountOrbit } from '../scripts/orbit';
+  mountOrbit();
+</script>
+
+<style>
+  .orbit { list-style: none; margin: 0; padding: 0; }
+
+  /*
+   * Each item is its own fixed layer so it can sit behind (z 0) or in front
+   * of (z 2) the toaster stage (z 1). scripts/orbit.ts sets transform,
+   * opacity and z-index every frame. Before JS runs, items stack in the
+   * center-bottom so they're still usable.
+   */
+  .orbit-item {
+    position: fixed;
+    left: 50%;
+    top: var(--orbit-center-y, 54%);
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    will-change: transform, opacity;
+  }
+
+  .chip {
+    display: grid;
+    gap: 0.15rem;
+    width: var(--chip-width, 13rem);
+    padding: 0.8rem 1.1rem;
+    text-align: left;
+    color: var(--text);
+    font: inherit;
+    background: rgb(20 20 32 / 0.6);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s, translate 0.3s var(--ease-out);
+  }
+  .chip:hover, .chip:focus-visible {
+    border-color: color-mix(in srgb, var(--accent-2) 60%, transparent);
+    box-shadow: 0 12px 40px -10px rgb(34 211 238 / 0.35);
+    translate: 0 -3px;
+  }
+  .chip-title { font-family: var(--font-display); font-weight: 600; font-size: 1rem; }
+  .chip-summary { font-size: 0.8rem; color: var(--text-muted); }
+
+  @media (max-width: 600px) {
+    .orbit-item { --chip-width: 8.5rem; }
+    .chip { padding: 0.6rem 0.8rem; }
+    .chip-title { font-size: 0.85rem; }
+    .chip-summary { font-size: 0.7rem; }
+  }
+
+  .project {
+    /* Tailwind's preflight zeroes margins; restore the UA centering for modals. */
+    margin: auto;
+    width: min(32rem, calc(100vw - 2rem));
+    padding: 2rem;
+    color: var(--text);
+    background: rgb(16 16 26 / 0.85);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.8);
+  }
+  .project[open] { animation: pop 0.35s var(--ease-out); }
+  .project::backdrop { background: rgb(4 4 8 / 0.55); backdrop-filter: blur(3px); }
+  @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
+
+  .project h2 { font-size: 1.75rem; margin-bottom: 0.75rem; }
+  .project p { color: var(--text-muted); }
+  .close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .close:hover { color: var(--text); background: var(--surface); }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem 0 0; }
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.2em 0.65em;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .links { margin: 1.25rem 0 0; display: flex; gap: 1rem; }
+  .links a { color: var(--accent-2); text-decoration: none; font-weight: 500; }
+</style>

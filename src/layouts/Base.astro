@@ -1,7 +1,6 @@
 ---
 import '../styles/tailwind.css';
 import '../styles/global.css';
-import Credits from '../components/Credits.astro';
 import { site } from '../config/site';
 
 interface Props {
@@ -47,10 +46,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <main id="main">
       <slot />
     </main>
-    <Credits />
   </body>
 </html>
 
-<style>
-  main { position: relative; z-index: 1; }
-</style>
