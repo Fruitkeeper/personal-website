@@ -1,6 +1,6 @@
 # Personal website
 
-Astro portfolio and blog with React islands (shadcn/ui + Tailwind v4), a WebGL nebula background and a Spline 3D scene. Deployed on Vercel.
+Astro portfolio and blog with a 3D sad toaster in the hero (Three.js), plus React/shadcn/ui + Tailwind v4 available for components. Deployed on Vercel.
 
 ## Make it yours
 
@@ -10,8 +10,8 @@ Astro portfolio and blog with React islands (shadcn/ui + Tailwind v4), a WebGL n
 | Domain (for RSS/sitemap)  | `SITE_URL` in `astro.config.mjs`        |
 | Colors & fonts            | `:root` tokens in `src/styles/global.css` |
 | Blog posts                | `src/content/blog/*.md`                 |
-| Panel 3D scene (Spline)   | `SPLINE_SCENE_URL` in `src/lib/visuals.ts` |
-| Nebula background shader  | `src/scripts/shaders/nebula.ts`         |
+| Hero 3D model             | `public/models/sad-toaster.glb`, scene in `src/scripts/toaster-scene.ts` |
+| Asset credits (footer)    | `credits` in `src/config/site.ts`       |
 | shadcn/ui components      | `src/components/ui/` (`npx shadcn add …`) |
 
 Posts with `draft: true` show up in dev but are excluded from production builds.
@@ -28,12 +28,24 @@ Posts with `draft: true` show up in dev but are excluded from production builds.
 
 ## Graphics
 
-- **Split layout** — fixed 40% visual panel starts on the right and swaps to the left (a fixed 0.9s animation, never scroll-linked) once you scroll ~30% of a screen, and back above ~10%; the 60% text column moves the other way (`src/lib/split.ts`, `src/scripts/split.ts`). Each page picks a palette via `<Base visual="…">` (`src/lib/visuals.ts`). Phones get the visual as a top banner; reduced-motion users get no slide.
-- **Visual panel** — Spline robot (`src/components/PanelScene.tsx`) that tracks the cursor anywhere on the page. `client:only` React island, loads after first paint; paused offscreen/in hidden tabs; still frame under `prefers-reduced-motion`; CSS gradient fallback until loaded. Edges are masked so it dissolves into the background.
-- **Background** — full-page raw-WebGL nebula (`src/scripts/background.ts`): domain-warped noise in the page palette, bends around the cursor, ripples on click and on panel swaps, stirs with scroll speed. Adaptive resolution, context-loss recovery.
+- **Hero toaster** — glTF model rendered with Three.js, lazy-loaded after first paint. Sways, leans toward the cursor, hops when clicked. Paused offscreen and in hidden tabs; still frame under `prefers-reduced-motion`; glow placeholder if WebGL or the model fails.
 - **Cards** — pointer-tracking spotlight, 3D tilt, drifting gradient orbs.
 - **Global** — scroll reveals, film grain, shimmering gradient text, glass cards.
 
 ## Deploy (Vercel)
 
 Astro is auto-detected, no config needed. Either push to GitHub and import the repo at vercel.com/new, or run `vercel` from this folder.
+
+## Swapping the 3D model
+
+The source `sad_toaster.glb` (Sketchfab export, 4.4MB) is gitignored. The served copy was converted and compressed (~0.5MB):
+
+```sh
+npx @gltf-transform/cli metalrough sad_toaster.glb /tmp/mr.glb
+npx @gltf-transform/cli optimize /tmp/mr.glb public/models/sad-toaster.glb \
+  --compress meshopt --texture-compress webp --texture-size 1024
+```
+
+For a different model, run the same commands, update `MODEL_URL`/`MODEL_YAW` in `src/scripts/toaster-scene.ts`, and its credit in `src/config/site.ts`. The model is auto-scaled and framed.
+
+**License:** “Sad toaster” by Tasha.Lime is CC BY-NC 4.0 — credit required (in the footer), no commercial use.

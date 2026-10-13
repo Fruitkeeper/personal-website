@@ -14,9 +14,12 @@ export default defineConfig({
   integrations: [sitemap(), react()],
   vite: {
     plugins: [tailwindcss()],
+    // Pre-bundle three at dev-server start. Otherwise Vite discovers it on the
+    // first dynamic import, re-optimizes, and that in-flight import fails.
+    optimizeDeps: { include: ['three'] },
     build: {
-      // The Spline runtime ships ~1.5–2MB of JS across a few chunks. It's
-      // client:only and code-split, so it never blocks first paint.
+      // three's WebGLRenderer + GLTFLoader is ~150KB gzipped. It's lazy-loaded
+      // by the hero after first paint, so the size is accepted.
       chunkSizeWarningLimit: 700,
     },
   },

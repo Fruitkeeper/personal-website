@@ -5,6 +5,9 @@
 
 export type Link = { label: string; href: string };
 
+/** Third-party assets that require attribution (shown in the footer). */
+export type Credit = { work: string; author: string; href: string; license: string; licenseHref: string };
+
 export type Project = {
   title: string;
   description: string;
@@ -72,5 +75,16 @@ export const projects: Project[] = [
     description: 'Non-featured projects only appear on the /projects page.',
     tags: ['Rust', 'CLI'],
     accent: ['#facc15', '#ef4444'],
+  },
+];
+
+export const credits: Credit[] = [
+  {
+    work: 'Sad toaster',
+    author: 'Tasha.Lime',
+    href: 'https://sketchfab.com/3d-models/sad-toaster-9b158486dfa1490eb9157966321283a0',
+    // Non-commercial: fine for a personal site; ask the author before commercial use.
+    license: 'CC BY-NC 4.0',
+    licenseHref: 'https://creativecommons.org/licenses/by-nc/4.0/',
   },
 ];

@@ -54,3 +54,14 @@ describe('site config', () => {
     expect(site.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   });
 });
+
+describe('credits', () => {
+  it('has complete, absolute-linked attribution for every credited asset', async () => {
+    const { credits } = await import('../src/config/site');
+    for (const c of credits) {
+      expect(c.work && c.author && c.license).toBeTruthy();
+      expect(c.href).toMatch(/^https:\/\//);
+      expect(c.licenseHref).toMatch(/^https:\/\//);
+    }
+  });
+});

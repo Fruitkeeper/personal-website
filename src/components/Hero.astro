@@ -3,6 +3,11 @@ import { site } from '../config/site';
 ---
 
 <section class="hero">
+  <div class="stage" aria-hidden="true">
+    <div class="glow"></div>
+    <canvas class="scene" data-toaster-canvas title="Click me"></canvas>
+  </div>
+
   <div class="container content">
     <p class="eyebrow" data-reveal>{site.role}</p>
     <h1 data-reveal style="--reveal-delay: 100ms">
@@ -14,28 +19,50 @@ import { site } from '../config/site';
       <a href={`mailto:${site.email}`} class="btn ghost">Get in touch</a>
     </div>
   </div>
-
-  <a href="#featured" class="scroll-hint" aria-label="Scroll to featured projects">
-    <span></span>
-  </a>
 </section>
+
+<script>
+  // Three.js + the model load on demand, so the text paints first.
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-toaster-canvas]');
+  if (canvas) {
+    import('../scripts/toaster-scene')
+      .then(({ mountToasterScene }) => mountToasterScene(canvas))
+      .catch((err) => console.warn('Toaster scene failed to load.', err));
+  }
+</script>
 
 <style>
   .hero {
-    position: relative;
-    display: grid;
+    min-height: calc(100dvh - 4rem);
+    display: flex;
+    flex-direction: column;
     align-items: center;
-  }
-  @media (min-width: 860px) {
-    .hero { min-height: calc(100dvh - var(--header-height)); }
+    justify-content: center;
+    text-align: center;
+    padding-block: 2rem 4rem;
   }
 
-  .content { position: relative; padding-block: 4rem; pointer-events: none; }
-  .content > * { pointer-events: auto; max-width: 40rem; }
+  .stage {
+    position: relative;
+    width: min(100%, 34rem);
+    height: clamp(16rem, 46dvh, 30rem);
+  }
+  .scene { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s var(--ease-out); cursor: pointer; }
+  .scene[data-ready] { opacity: 1; }
+  /* Soft light behind the toaster; also the placeholder while it loads. */
+  .glow {
+    position: absolute;
+    inset: 10% 15%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(124 92 255 / 0.25), rgb(34 211 238 / 0.08) 45%, transparent 70%);
+    filter: blur(30px);
+  }
+
+  .content > * { max-width: 40rem; margin-inline: auto; }
   h1 { margin-bottom: 1.25rem; }
   .tagline { font-size: clamp(1.1rem, 2.2vw, 1.35rem); color: var(--text-muted); margin-bottom: 2.25rem; }
 
-  .actions { display: flex; gap: 0.85rem; flex-wrap: wrap; }
+  .actions { display: flex; gap: 0.85rem; flex-wrap: wrap; justify-content: center; }
   .btn {
     display: inline-flex;
     align-items: center;
@@ -48,41 +75,6 @@ import { site } from '../config/site';
   .btn:hover { transform: translateY(-2px); color: inherit; }
   .primary { background: var(--gradient); color: white; box-shadow: 0 8px 30px -8px rgb(124 92 255 / 0.6); }
   .primary:hover { color: white; box-shadow: 0 12px 40px -8px rgb(124 92 255 / 0.8); }
-  .ghost { border: 1px solid var(--border); background: var(--surface); backdrop-filter: blur(8px); }
+  .ghost { border: 1px solid var(--border); background: var(--surface); }
   .ghost:hover { background: rgb(255 255 255 / 0.08); }
-
-  .scroll-hint {
-    display: none;
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    translate: -50% 0;
-    width: 1.5rem;
-    height: 2.4rem;
-    border: 2px solid var(--border);
-    border-radius: 999px;
-  }
-  .scroll-hint span {
-    position: absolute;
-    top: 0.4rem;
-    left: 50%;
-    width: 4px;
-    height: 8px;
-    margin-left: -2px;
-    border-radius: 2px;
-    background: var(--text-muted);
-    animation: scroll 1.8s ease-in-out infinite;
-  }
-  @media (min-width: 860px) { .scroll-hint { display: block; } }
-  @keyframes scroll {
-    0% { opacity: 0; transform: translateY(0); }
-    40% { opacity: 1; }
-    100% { opacity: 0; transform: translateY(12px); }
-  }
-
-  /* On narrow screens the blob sits behind the text; dim it for legibility. */
-  @media (max-width: 768px) {
-    .scene { opacity: 0; }
-    .scene[data-ready] { opacity: 0.55; }
-  }
 </style>

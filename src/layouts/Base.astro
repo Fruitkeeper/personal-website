@@ -3,21 +3,16 @@ import '../styles/tailwind.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import VisualPanel from '../components/VisualPanel.astro';
-import Background from '../components/Background.astro';
 import { site } from '../config/site';
-import type { Visual } from '../lib/visuals';
 
 interface Props {
   title?: string;
   description?: string;
   /** Set for blog posts so link previews show the right type. */
   type?: 'website' | 'article';
-  /** Palette for the split layout's visual panel. */
-  visual?: Visual;
 }
 
-const { title, description = site.description, type = 'website', visual = 'home' } = Astro.props;
+const { title, description = site.description, type = 'website' } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} — ${site.role}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -54,18 +49,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Background />
     <Header />
-    <VisualPanel visual={visual} />
-    <div class="split-content">
-      <main id="main">
-        <slot />
-      </main>
-      <Footer />
-    </div>
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
     <script>
       import '../scripts/interactions';
-      import '../scripts/split';
     </script>
   </body>
 </html>
@@ -84,68 +74,5 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   }
   .skip-link:focus { top: 1rem; }
 
-
   main { position: relative; z-index: 1; }
-
-  /*
-   * Split layout: a fixed 40% visual panel and a 60% content column.
-   * scripts/split.ts sets data-split="start" (panel right) or "end" (panel
-   * left) on <html>; the swap is a fixed-length transition, never scroll-linked,
-   * so it can't be left half-way. Without JS the layout stays in "start".
-   */
-  :global(:root) {
-    --panel-width: 40%;
-    --content-width: 60%;
-    --header-height: 4rem;
-    --split-duration: 0.9s;
-  }
-
-  @media (min-width: 860px) {
-    :global(.visual-panel) {
-      position: fixed;
-      top: var(--header-height);
-      bottom: 0;
-      left: var(--content-width);
-      width: var(--panel-width);
-      z-index: 0;
-      overflow: hidden;
-      will-change: transform;
-    }
-    .split-content {
-      width: var(--content-width);
-      will-change: transform;
-    }
-
-    /* -150% of the panel's own 40% width = 60% of the viewport: right edge → left edge. */
-    :global([data-split='end'] .visual-panel) { transform: translateX(-150%); }
-    /* 66.667% of the column's own 60% width = 40% of the viewport. */
-    :global([data-split='end']) .split-content { transform: translateX(66.667%); }
-
-    :global([data-split-animate] .visual-panel),
-    :global([data-split-animate]) .split-content {
-      transition: transform var(--split-duration) var(--ease-out);
-    }
-
-    /*
-     * The panel briefly passes behind the text mid-swap; dip its opacity so the
-     * text stays readable. data-split-swap is only set on real swaps, so the dip
-     * never plays on load. One keyframe per direction so it replays on every
-     * swap (changing animation-name restarts the animation).
-     */
-    :global([data-split-swap='end'] .visual-panel) { animation: panel-dip-a var(--split-duration) ease-in-out; }
-    :global([data-split-swap='start'] .visual-panel) { animation: panel-dip-b var(--split-duration) ease-in-out; }
-  }
-
-  @keyframes panel-dip-a { 50% { opacity: 0.35; } }
-  @keyframes panel-dip-b { 50% { opacity: 0.35; } }
-
-  /* Phones and small tablets: the visual becomes a banner above the content. */
-  @media (max-width: 859.98px) {
-    :global(.visual-panel) {
-      position: relative;
-      display: block;
-      height: 35svh;
-      overflow: hidden;
-    }
-  }
 </style>

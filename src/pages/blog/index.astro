@@ -7,7 +7,7 @@ import { getPosts } from '../../lib/content';
 const posts = await getPosts();
 ---
 
-<Base visual="writing" title="Writing" description="Notes, essays and things I've learned.">
+<Base title="Writing" description="Notes, essays and things I've learned.">
   <PageHeader eyebrow="Writing" title="Notes & essays" lede="Things I've learned, building in public." />
   <section class="container page-body">
     <PostList posts={posts} />

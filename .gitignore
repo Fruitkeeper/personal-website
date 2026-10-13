@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Source 3D asset (4.4MB). The optimized copy served by the site is public/models/sad-toaster.glb,
+# made with: npx @gltf-transform/cli metalrough + optimize --compress meshopt --texture-compress webp --texture-size 1024
+/sad_toaster.glb
