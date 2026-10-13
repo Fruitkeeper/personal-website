@@ -100,14 +100,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
   /*
    * Split layout: a fixed 40% visual panel and a 60% content column.
-   * --split (0→1, set from scroll by scripts/split.ts) slides the panel from
-   * the right edge to the left while the content moves the other way.
-   * Without JS --split is unset, so the layout simply stays in its start state.
+   * scripts/split.ts sets data-split="start" (panel right) or "end" (panel
+   * left) on <html>; the swap is a fixed-length transition, never scroll-linked,
+   * so it can't be left half-way. Without JS the layout stays in "start".
    */
   :global(:root) {
     --panel-width: 40%;
     --content-width: 60%;
     --header-height: 4rem;
+    --split-duration: 0.9s;
   }
 
   @media (min-width: 860px) {
@@ -119,18 +120,35 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       width: var(--panel-width);
       z-index: 0;
       overflow: hidden;
-      /* -150% of its own 40% width = 60% of the viewport: right edge → left edge. */
-      transform: translateX(calc(var(--split, 0) * -150%));
-      opacity: var(--split-panel-opacity, 1);
-      will-change: transform, opacity;
+      will-change: transform;
     }
     .split-content {
       width: var(--content-width);
-      /* 66.667% of its own 60% width = 40% of the viewport. */
-      transform: translateX(calc(var(--split, 0) * 66.667%));
       will-change: transform;
     }
+
+    /* -150% of the panel's own 40% width = 60% of the viewport: right edge → left edge. */
+    :global([data-split='end'] .visual-panel) { transform: translateX(-150%); }
+    /* 66.667% of the column's own 60% width = 40% of the viewport. */
+    :global([data-split='end']) .split-content { transform: translateX(66.667%); }
+
+    :global([data-split-animate] .visual-panel),
+    :global([data-split-animate]) .split-content {
+      transition: transform var(--split-duration) var(--ease-out);
+    }
+
+    /*
+     * The panel briefly passes behind the text mid-swap; dip its opacity so the
+     * text stays readable. data-split-swap is only set on real swaps, so the dip
+     * never plays on load. One keyframe per direction so it replays on every
+     * swap (changing animation-name restarts the animation).
+     */
+    :global([data-split-swap='end'] .visual-panel) { animation: panel-dip-a var(--split-duration) ease-in-out; }
+    :global([data-split-swap='start'] .visual-panel) { animation: panel-dip-b var(--split-duration) ease-in-out; }
   }
+
+  @keyframes panel-dip-a { 50% { opacity: 0.35; } }
+  @keyframes panel-dip-b { 50% { opacity: 0.35; } }
 
   /* Phones and small tablets: the visual becomes a banner above the content. */
   @media (max-width: 859.98px) {

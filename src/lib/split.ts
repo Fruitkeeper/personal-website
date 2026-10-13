@@ -1,25 +1,32 @@
-// Scroll → position math for the split layout, kept pure for unit testing.
-// Progress 0 = visual panel on the right; 1 = visual panel on the left.
+// Scroll → layout state for the split layout, kept pure for unit testing.
+//
+// The layout is always in exactly one of two states — never in between — so
+// the reader can't park it half-swapped. Crossing a threshold plays a fixed
+// CSS transition from one state to the other.
 
-/** Fraction of the viewport height the reader scrolls to complete the slide. */
-export const SLIDE_DISTANCE_RATIO = 0.8;
+/** `start`: visual panel on the right. `end`: visual panel on the left. */
+export type SplitState = 'start' | 'end';
+
+/** Scrolling past this fraction of the viewport height swaps to `end`… */
+export const ENTER_RATIO = 0.3;
+/** …and scrolling back above this one swaps back to `start`. The gap between
+ *  the two (hysteresis) stops it flickering when parked near a threshold. */
+export const EXIT_RATIO = 0.1;
 
 /**
- * Pages that can scroll less than this fraction of the viewport don't slide
- * at all; otherwise the swap would snap across in a few pixels of scroll.
+ * Pages that can scroll less than this fraction of the viewport never swap:
+ * the reader couldn't scroll far enough to see the content after the swap.
  */
 export const MIN_SCROLLABLE_RATIO = 0.4;
 
-const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
-
-export function splitProgress(scrollY: number, viewportHeight: number, maxScroll: number): number {
-  if (!(viewportHeight > 0) || maxScroll < viewportHeight * MIN_SCROLLABLE_RATIO) return 0;
-  const distance = Math.min(viewportHeight * SLIDE_DISTANCE_RATIO, maxScroll);
-  const t = clamp01(scrollY / distance);
-  return t * t * (3 - 2 * t); // smoothstep: eases in and out of the slide
-}
-
-/** Panel fades a little mid-slide, while it passes behind the text. */
-export function panelOpacity(progress: number): number {
-  return 1 - 0.55 * Math.sin(Math.PI * clamp01(progress));
+export function nextSplitState(
+  current: SplitState,
+  scrollY: number,
+  viewportHeight: number,
+  maxScroll: number,
+): SplitState {
+  if (!(viewportHeight > 0) || maxScroll < viewportHeight * MIN_SCROLLABLE_RATIO) return 'start';
+  if (current === 'start' && scrollY > viewportHeight * ENTER_RATIO) return 'end';
+  if (current === 'end' && scrollY < viewportHeight * EXIT_RATIO) return 'start';
+  return current;
 }
