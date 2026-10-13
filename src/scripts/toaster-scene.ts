@@ -31,6 +31,11 @@ const MODEL_HEIGHT = 2;
 /** The model's face points along +X; turn it to look at the camera. */
 const MODEL_YAW = -Math.PI / 2;
 const HOP_HEIGHT = 0.35;
+/**
+ * Empty space around the toaster when framing it (0.15 = tight). Larger makes
+ * it smaller on screen, leaving room for the project orbit around it.
+ */
+const FRAME_MARGIN = 1.1;
 /** Node the model build (tools/build-model.mjs) puts at the neck. */
 const HEAD_PIVOT_NODE = 'HeadPivot';
 /** Idle look-around amplitude (radians), layered on top of cursor tracking. */
@@ -150,7 +155,7 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     // Room for the hop above, and for the sway.
-    const distance = fitDistance({ ...modelSize, y: modelSize.y + HOP_HEIGHT }, FOV, camera.aspect, 0.15);
+    const distance = fitDistance({ ...modelSize, y: modelSize.y + HOP_HEIGHT }, FOV, camera.aspect, FRAME_MARGIN);
     camera.position.set(0, lookAtY + distance * 0.12, distance);
     camera.lookAt(0, lookAtY, 0);
     camera.updateProjectionMatrix();

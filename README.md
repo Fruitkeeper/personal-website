@@ -26,13 +26,13 @@ Everything personal is in `src/config/site.ts`:
 
 ## Pieces
 
-- **Orbit** (`src/components/Orbit.astro`, `src/scripts/orbit.ts`, math in `src/lib/orbit.ts`): projects ride a tilted ring around the toaster, passing behind and in front of it. Hover/focus or an open project stops it. Click opens a project dialog. Portrait phones get an upright ring. Reduced motion: static, all in front.
+- **Orbit** (`src/components/Orbit.astro`, `src/scripts/orbit.ts`, math in `src/lib/orbit.ts`): projects ride a flat ring around the toaster, always in front of it and clickable. Hover/focus or an open project stops it. Click opens a project dialog. The ring is sized to the viewport (taller on phones). Reduced motion: static.
 - **Contact dock** (`src/components/Contact.astro`, `src/scripts/contact.ts`, math in `src/lib/magnet.ts`): magnetic buttons with a spinning gradient ring and slide-out labels. Clicking email copies the address (falls back to `mailto:`).
 
 ## The toaster
 
 - Scene: `src/scripts/toaster-scene.ts` (pure math in `src/lib/toaster.ts`), mounted by `src/components/Toaster.astro`.
-- Only the head turns toward the cursor; the body bobs and hops when clicked. Paused in hidden tabs; still frame under `prefers-reduced-motion`; glow placeholder if WebGL or the model fails.
+- Framing (how big it appears) is `FRAME_MARGIN` in `src/scripts/toaster-scene.ts`. Only the head turns toward the cursor; the body bobs and hops when clicked. Paused in hidden tabs; still frame under `prefers-reduced-motion`; glow placeholder if WebGL or the model fails.
 
 ## The 3D model
 

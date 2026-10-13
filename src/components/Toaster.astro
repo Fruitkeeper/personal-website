@@ -17,7 +17,7 @@
   .stage {
     position: fixed;
     inset: 0;
-    /* Orbit items sit at z 0 (behind) or z 2 (in front) — see scripts/orbit.ts. */
+    /* Orbit items sit above this (z 2) so they're always clickable — see Orbit.astro. */
     z-index: 1;
     display: grid;
     place-items: center;
@@ -34,7 +34,7 @@
   .scene[data-ready] { opacity: 1; }
   /* Soft light behind the toaster; also the placeholder while it loads. */
   .glow {
-    width: min(70vmin, 36rem);
+    width: min(48vmin, 26rem);
     aspect-ratio: 1;
     border-radius: 50%;
     background: radial-gradient(circle, rgb(124 92 255 / 0.22), rgb(34 211 238 / 0.07) 45%, transparent 70%);

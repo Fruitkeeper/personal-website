@@ -1,7 +1,7 @@
-// Drives the project orbit: positions items around the toaster every frame,
+// Drives the project orbit: positions items on a flat ring around the toaster,
 // eases to a stop while the visitor hovers/focuses an item or has a project
 // open, and opens project dialogs. Pure math lives in src/lib/orbit.ts.
-import { advanceRotation, itemAngle, layerFor, orbitRadii, placeOnOrbit, placeStatic } from '../lib/orbit';
+import { advanceRotation, itemAngle, orbitRadii, placeOnRing } from '../lib/orbit';
 
 /** Start with items off the vertical axis, so none sits dead center on the toaster. */
 const INITIAL_ROTATION = Math.PI / 4;
@@ -20,17 +20,15 @@ export function mountOrbit() {
 
   const measure = () => {
     const itemWidth = Math.max(...items.map((el) => el.offsetWidth));
-    radii = orbitRadii(window.innerWidth, window.innerHeight, itemWidth);
+    const itemHeight = Math.max(...items.map((el) => el.offsetHeight));
+    // The ring is centered on the viewport, like the toaster.
+    radii = orbitRadii(window.innerWidth, window.innerHeight, itemWidth, itemHeight);
   };
 
   const layout = () => {
     items.forEach((el, i) => {
-      const angle = itemAngle(i, items.length, rotation);
-      const p = reducedMotion.matches ? placeStatic(angle, radii.x, radii.y) : placeOnOrbit(angle, radii.x, radii.y);
-      el.style.transform = `translate(-50%, -50%) translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px) scale(${p.scale.toFixed(3)})`;
-      el.style.opacity = p.opacity.toFixed(3);
-      // Under/over the toaster stage (z-index 1, see Toaster.astro), nearer on top.
-      el.style.zIndex = String(layerFor(p.depth));
+      const p = placeOnRing(itemAngle(i, items.length, rotation), radii.x, radii.y);
+      el.style.transform = `translate(-50%, -50%) translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px)`;
     });
   };
 

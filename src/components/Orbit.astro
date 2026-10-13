@@ -51,18 +51,17 @@ const items = projects.map((p) => ({ ...p, id: `project-${slugify(p.title)}` }))
   .orbit { list-style: none; margin: 0; padding: 0; }
 
   /*
-   * Each item is its own fixed layer so it can sit behind (z 0) or in front
-   * of (z 2) the toaster stage (z 1). scripts/orbit.ts sets transform,
-   * opacity and z-index every frame. Before JS runs, items stack in the
-   * center-bottom so they're still usable.
+   * Items ride a flat ring centered on the toaster, always above its stage
+   * (z-index 1) so every one is clickable. scripts/orbit.ts sets the
+   * transform every frame; before JS runs they stack in the center.
    */
   .orbit-item {
     position: fixed;
     left: 50%;
-    top: var(--orbit-center-y, 54%);
+    top: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    will-change: transform, opacity;
+    will-change: transform;
   }
 
   .chip {
