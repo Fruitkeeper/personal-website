@@ -16,3 +16,6 @@ export function paletteStyle(visual: Visual): string {
   const [a, b, c] = palettes[visual];
   return `--accent-1: ${a}; --accent-2: ${b}; --accent-3: ${c};`;
 }
+
+/** Spline scene shown in the visual panel: a robot that tracks the cursor. */
+export const SPLINE_SCENE_URL = 'https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode';

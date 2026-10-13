@@ -134,3 +134,14 @@ pre { border-radius: var(--radius); padding: 1.25rem; overflow-x: auto; border: 
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
 }
+
+/* Spinner used by SplineScene's Suspense fallback. */
+.loader {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent-2);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
