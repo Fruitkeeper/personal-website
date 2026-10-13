@@ -14,9 +14,18 @@ export default defineConfig({
   integrations: [sitemap(), react()],
   vite: {
     plugins: [tailwindcss()],
-    // Pre-bundle three at dev-server start. Otherwise Vite discovers it on the
-    // first dynamic import, re-optimizes, and that in-flight import fails.
-    optimizeDeps: { include: ['three'] },
+    // Pre-bundle three (and every three/examples module the toaster scene
+    // imports) at dev-server start. Otherwise Vite discovers them on the first
+    // dynamic import, re-optimizes, and that in-flight import fails in dev.
+    // Keep this list in sync with the imports in src/scripts/toaster-scene.ts.
+    optimizeDeps: {
+      include: [
+        'three',
+        'three/examples/jsm/loaders/GLTFLoader.js',
+        'three/examples/jsm/environments/RoomEnvironment.js',
+        'three/examples/jsm/libs/meshopt_decoder.module.js',
+      ],
+    },
     build: {
       // three's WebGLRenderer + GLTFLoader is ~150KB gzipped. It's lazy-loaded
       // by the hero after first paint, so the size is accepted.
