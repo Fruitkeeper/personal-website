@@ -60,3 +60,30 @@ describe('idleYaw', () => {
     for (let t = 0; t < 30; t += 0.37) expect(Math.abs(idleYaw(t, 0.3))).toBeLessThanOrEqual(0.3);
   });
 });
+
+import { MAX_HEAD_PITCH, MAX_HEAD_YAW, headAngles } from '../src/lib/toaster';
+
+describe('headAngles', () => {
+  it('looks straight ahead when the cursor is on the toaster', () => {
+    expect(headAngles(0, 0, 500)).toEqual({ yaw: 0, pitch: 0 });
+  });
+  it('turns right for a cursor to the right, left for the left', () => {
+    expect(headAngles(250, 0, 500).yaw).toBeCloseTo(MAX_HEAD_YAW / 2);
+    expect(headAngles(-250, 0, 500).yaw).toBeCloseTo(-MAX_HEAD_YAW / 2);
+  });
+  it('looks up for a cursor above (screen y is down)', () => {
+    expect(headAngles(0, -500, 500).pitch).toBeCloseTo(MAX_HEAD_PITCH);
+    expect(headAngles(0, 500, 500).pitch).toBeCloseTo(-MAX_HEAD_PITCH);
+  });
+  it('clamps beyond reach so the head never over-rotates', () => {
+    expect(headAngles(5000, -5000, 500)).toEqual({ yaw: MAX_HEAD_YAW, pitch: MAX_HEAD_PITCH });
+  });
+  it.each([
+    [10, 10, 0],
+    [10, 10, -5],
+    [NaN, 10, 500],
+    [10, Infinity, 500],
+  ])('returns neutral for degenerate input (%s, %s, %s)', (dx, dy, reach) => {
+    expect(headAngles(dx, dy, reach)).toEqual({ yaw: 0, pitch: 0 });
+  });
+});

@@ -21,7 +21,7 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { HOP_DURATION, fitDistance, hopOffset, idleYaw } from '../lib/toaster';
+import { HOP_DURATION, fitDistance, headAngles, hopOffset, idleYaw } from '../lib/toaster';
 
 const MODEL_URL = '/models/sad-toaster.glb';
 const FOV = 35;
@@ -31,6 +31,10 @@ const MODEL_HEIGHT = 2;
 /** The model's face points along +X; turn it to look at the camera. */
 const MODEL_YAW = -Math.PI / 2;
 const HOP_HEIGHT = 0.35;
+/** Node the model build (tools/build-model.mjs) puts at the neck. */
+const HEAD_PIVOT_NODE = 'HeadPivot';
+/** Idle look-around amplitude (radians), layered on top of cursor tracking. */
+const IDLE_HEAD_YAW = 0.15;
 
 export type SceneHandle = { dispose: () => void };
 
@@ -122,7 +126,7 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
     return null;
   }
 
-  // rig: pointer tilt + hop. model inside: normalized + idle sway.
+  // rig: hop + bob. swivel: faces the model to the camera. Only the head turns.
   const rig = new Group();
   const swivel = new Group();
   const modelSize = normalize(model);
@@ -131,6 +135,12 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
   rig.add(swivel);
   const shadow = createContactShadow(Math.max(modelSize.x, modelSize.z) * 1.6);
   scene.add(rig, shadow);
+
+  const head = model.getObjectByName(HEAD_PIVOT_NODE);
+  if (!head) console.warn(`Model has no "${HEAD_PIVOT_NODE}" node; the head won't turn.`);
+  // Yaw about the neck, then pitch about the head's own side axis. The model's
+  // face points along its local +X, so its side axis is Z.
+  head?.rotation.set(0, 0, 0, 'YZX');
 
   const lookAtY = modelSize.y * 0.5;
 
@@ -151,12 +161,13 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
   });
   resizeObserver.observe(canvas);
 
-  // Pointer: the toaster leans toward the cursor, eased so it feels weighty.
-  const pointer = { x: 0, y: 0 };
-  const eased = { x: 0, y: 0 };
+  // Pointer: the head looks toward the cursor, measured from the toaster itself.
+  const look = { yaw: 0, pitch: 0 };
+  const eased = { yaw: 0, pitch: 0 };
   const onPointerMove = (e: PointerEvent) => {
-    pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
+    const rect = canvas.getBoundingClientRect();
+    const reach = Math.max(window.innerWidth, window.innerHeight) * 0.5;
+    Object.assign(look, headAngles(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2), reach));
   };
   window.addEventListener('pointermove', onPointerMove, { passive: true });
 
@@ -172,14 +183,16 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
   canvas.addEventListener('pointerdown', onPointerDown);
 
   const render = () => {
-    eased.x += (pointer.x - eased.x) * 0.05;
-    eased.y += (pointer.y - eased.y) * 0.05;
+    const still = reducedMotion.matches;
+    eased.yaw += (look.yaw - eased.yaw) * 0.08;
+    eased.pitch += (look.pitch - eased.pitch) * 0.08;
     const lift = hopOffset(elapsed - hopStart) * HOP_HEIGHT;
-    const bob = reducedMotion.matches ? 0 : Math.sin(elapsed * 1.4) * 0.03;
+    const bob = still ? 0 : Math.sin(elapsed * 1.4) * 0.03;
 
-    swivel.rotation.y = MODEL_YAW + (reducedMotion.matches ? 0 : idleYaw(elapsed));
-    rig.rotation.y = eased.x * 0.5;
-    rig.rotation.x = eased.y * 0.15;
+    if (head) {
+      head.rotation.y = eased.yaw + (still ? 0 : idleYaw(elapsed, IDLE_HEAD_YAW));
+      head.rotation.z = eased.pitch;
+    }
     rig.position.y = lift + bob;
     // Shadow shrinks and fades as the toaster leaves the ground.
     const away = 1 - Math.min(1, (lift + bob) / HOP_HEIGHT) * 0.5;

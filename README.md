@@ -28,7 +28,7 @@ Posts with `draft: true` show up in dev but are excluded from production builds.
 
 ## Graphics
 
-- **Hero toaster** — glTF model rendered with Three.js, lazy-loaded after first paint. Sways, leans toward the cursor, hops when clicked. Paused offscreen and in hidden tabs; still frame under `prefers-reduced-motion`; glow placeholder if WebGL or the model fails.
+- **Hero toaster** — glTF model rendered with Three.js, lazy-loaded after first paint. The head turns to follow the cursor (the body stays put), bobs gently, hops when clicked. Paused offscreen and in hidden tabs; still frame under `prefers-reduced-motion`; glow placeholder if WebGL or the model fails.
 - **Cards** — pointer-tracking spotlight, 3D tilt, drifting gradient orbs.
 - **Global** — scroll reveals, film grain, shimmering gradient text, glass cards.
 
@@ -36,16 +36,16 @@ Posts with `draft: true` show up in dev but are excluded from production builds.
 
 Astro is auto-detected, no config needed. Either push to GitHub and import the repo at vercel.com/new, or run `vercel` from this folder.
 
-## Swapping the 3D model
+## The 3D model
 
-The source `sad_toaster.glb` (Sketchfab export, 4.4MB) is gitignored. The served copy was converted and compressed (~0.5MB):
+The source `sad_toaster.glb` (Sketchfab export, 4.4MB) is gitignored. `npm run build:model` (`tools/build-model.mjs`) turns it into `public/models/sad-toaster.glb` (~0.5MB):
 
-```sh
-npx @gltf-transform/cli metalrough sad_toaster.glb /tmp/mr.glb
-npx @gltf-transform/cli optimize /tmp/mr.glb public/models/sad-toaster.glb \
-  --compress meshopt --texture-compress webp --texture-size 1024
-```
+1. converts the legacy spec/gloss material to metal/rough (three.js no longer reads spec/gloss);
+2. splits the mesh into **Body** and **Head** by connected parts above `NECK_Y`, and adds a `HeadPivot` node at the neck rod, which the site rotates so only the head turns;
+3. compresses (meshopt geometry, 1024px WebP texture), keeping that node hierarchy.
 
-For a different model, run the same commands, update `MODEL_URL`/`MODEL_YAW` in `src/scripts/toaster-scene.ts`, and its credit in `src/config/site.ts`. The model is auto-scaled and framed.
+`node tools/build-model.mjs analyze|islands sad_toaster.glb` prints the height profile and parts used to choose `NECK_Y`.
+
+For a different model: adjust `NECK_Y` (or drop the split; the site just won't turn a head it can't find), update `MODEL_URL`/`MODEL_YAW` in `src/scripts/toaster-scene.ts`, and its credit in `src/config/site.ts`. The model is auto-scaled and framed.
 
 **License:** “Sad toaster” by Tasha.Lime is CC BY-NC 4.0 — credit required (in the footer), no commercial use.

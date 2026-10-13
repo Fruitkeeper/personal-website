@@ -36,3 +36,22 @@ export function hopOffset(t: number): number {
 export function idleYaw(elapsed: number, amplitude = 0.35): number {
   return Math.sin(elapsed * 0.6) * amplitude;
 }
+
+/** How far the head can turn: yaw left/right and pitch up/down, in radians. */
+export const MAX_HEAD_YAW = 1.0; // ~57°
+export const MAX_HEAD_PITCH = 0.3; // ~17°
+
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+
+/**
+ * Head angles to look at the cursor. `dx`, `dy` are the cursor's offset from
+ * the toaster in CSS pixels (y down); `reach` is the distance at which the
+ * head is fully turned. Cursor right → positive yaw; above → positive pitch.
+ */
+export function headAngles(dx: number, dy: number, reach: number): { yaw: number; pitch: number } {
+  if (!(reach > 0) || !Number.isFinite(dx) || !Number.isFinite(dy)) return { yaw: 0, pitch: 0 };
+  return {
+    yaw: clamp(dx / reach, -1, 1) * MAX_HEAD_YAW,
+    pitch: clamp((0 - dy) / reach, -1, 1) * MAX_HEAD_PITCH, // 0 - dy, not -dy: avoids -0
+  };
+}
