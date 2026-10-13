@@ -37,21 +37,30 @@ export function idleYaw(elapsed: number, amplitude = 0.35): number {
   return Math.sin(elapsed * 0.6) * amplitude;
 }
 
-/** How far the head can turn: yaw left/right and pitch up/down, in radians. */
+/** How far the head can turn, in radians. Up gets more range than down: looking up is the expressive one. */
 export const MAX_HEAD_YAW = 1.0; // ~57°
-export const MAX_HEAD_PITCH = 0.3; // ~17°
+export const MAX_HEAD_PITCH_UP = 0.6; // ~34°
+export const MAX_HEAD_PITCH_DOWN = 0.3; // ~17°
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 /**
  * Head angles to look at the cursor. `dx`, `dy` are the cursor's offset from
- * the toaster in CSS pixels (y down); `reach` is the distance at which the
- * head is fully turned. Cursor right → positive yaw; above → positive pitch.
+ * the toaster in CSS pixels (y down). `reachX`/`reachY` are the offsets at
+ * which the head is fully turned — measured per axis, so on a wide screen the
+ * top edge still means "look all the way up". Cursor right → positive yaw;
+ * above → positive pitch.
  */
-export function headAngles(dx: number, dy: number, reach: number): { yaw: number; pitch: number } {
-  if (!(reach > 0) || !Number.isFinite(dx) || !Number.isFinite(dy)) return { yaw: 0, pitch: 0 };
+export function headAngles(
+  dx: number,
+  dy: number,
+  reachX: number,
+  reachY: number,
+): { yaw: number; pitch: number } {
+  if (!(reachX > 0 && reachY > 0) || !Number.isFinite(dx) || !Number.isFinite(dy)) return { yaw: 0, pitch: 0 };
+  const up = clamp((0 - dy) / reachY, -1, 1); // 0 - dy, not -dy: avoids -0
   return {
-    yaw: clamp(dx / reach, -1, 1) * MAX_HEAD_YAW,
-    pitch: clamp((0 - dy) / reach, -1, 1) * MAX_HEAD_PITCH, // 0 - dy, not -dy: avoids -0
+    yaw: clamp(dx / reachX, -1, 1) * MAX_HEAD_YAW,
+    pitch: up * (up > 0 ? MAX_HEAD_PITCH_UP : MAX_HEAD_PITCH_DOWN),
   };
 }

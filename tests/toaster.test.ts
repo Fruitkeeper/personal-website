@@ -61,29 +61,40 @@ describe('idleYaw', () => {
   });
 });
 
-import { MAX_HEAD_PITCH, MAX_HEAD_YAW, headAngles } from '../src/lib/toaster';
+import { MAX_HEAD_PITCH_DOWN, MAX_HEAD_PITCH_UP, MAX_HEAD_YAW, headAngles } from '../src/lib/toaster';
 
 describe('headAngles', () => {
   it('looks straight ahead when the cursor is on the toaster', () => {
-    expect(headAngles(0, 0, 500)).toEqual({ yaw: 0, pitch: 0 });
+    expect(headAngles(0, 0, 720, 450)).toEqual({ yaw: 0, pitch: 0 });
   });
   it('turns right for a cursor to the right, left for the left', () => {
-    expect(headAngles(250, 0, 500).yaw).toBeCloseTo(MAX_HEAD_YAW / 2);
-    expect(headAngles(-250, 0, 500).yaw).toBeCloseTo(-MAX_HEAD_YAW / 2);
+    expect(headAngles(360, 0, 720, 450).yaw).toBeCloseTo(MAX_HEAD_YAW / 2);
+    expect(headAngles(-360, 0, 720, 450).yaw).toBeCloseTo(-MAX_HEAD_YAW / 2);
   });
-  it('looks up for a cursor above (screen y is down)', () => {
-    expect(headAngles(0, -500, 500).pitch).toBeCloseTo(MAX_HEAD_PITCH);
-    expect(headAngles(0, 500, 500).pitch).toBeCloseTo(-MAX_HEAD_PITCH);
+  it('looks fully up when the cursor is at the top edge of a wide screen', () => {
+    // 1440×900 screen, toaster centered: top edge is 450px up.
+    expect(headAngles(0, -450, 720, 450).pitch).toBeCloseTo(MAX_HEAD_PITCH_UP);
+  });
+  it('looks further up than down', () => {
+    expect(headAngles(0, -450, 720, 450).pitch).toBeGreaterThan(-headAngles(0, 450, 720, 450).pitch);
+    expect(headAngles(0, 450, 720, 450).pitch).toBeCloseTo(-MAX_HEAD_PITCH_DOWN);
+  });
+  it('scales vertical tracking by height, horizontal by width', () => {
+    const a = headAngles(225, -225, 720, 450);
+    expect(a.pitch).toBeCloseTo(MAX_HEAD_PITCH_UP / 2);
+    expect(a.yaw).toBeCloseTo(MAX_HEAD_YAW * (225 / 720));
   });
   it('clamps beyond reach so the head never over-rotates', () => {
-    expect(headAngles(5000, -5000, 500)).toEqual({ yaw: MAX_HEAD_YAW, pitch: MAX_HEAD_PITCH });
+    expect(headAngles(5000, -5000, 720, 450)).toEqual({ yaw: MAX_HEAD_YAW, pitch: MAX_HEAD_PITCH_UP });
+    expect(headAngles(-5000, 5000, 720, 450)).toEqual({ yaw: -MAX_HEAD_YAW, pitch: -MAX_HEAD_PITCH_DOWN });
   });
   it.each([
-    [10, 10, 0],
-    [10, 10, -5],
-    [NaN, 10, 500],
-    [10, Infinity, 500],
-  ])('returns neutral for degenerate input (%s, %s, %s)', (dx, dy, reach) => {
-    expect(headAngles(dx, dy, reach)).toEqual({ yaw: 0, pitch: 0 });
+    [10, 10, 0, 450],
+    [10, 10, 720, 0],
+    [10, 10, -5, 450],
+    [NaN, 10, 720, 450],
+    [10, Infinity, 720, 450],
+  ])('returns neutral for degenerate input (%s, %s, %s, %s)', (dx, dy, rx, ry) => {
+    expect(headAngles(dx, dy, rx, ry)).toEqual({ yaw: 0, pitch: 0 });
   });
 });

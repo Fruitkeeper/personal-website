@@ -166,8 +166,16 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
   const eased = { yaw: 0, pitch: 0 };
   const onPointerMove = (e: PointerEvent) => {
     const rect = canvas.getBoundingClientRect();
-    const reach = Math.max(window.innerWidth, window.innerHeight) * 0.5;
-    Object.assign(look, headAngles(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2), reach));
+    // Fully turned when the cursor reaches the screen edge on that axis.
+    Object.assign(
+      look,
+      headAngles(
+        e.clientX - (rect.left + rect.width / 2),
+        e.clientY - (rect.top + rect.height / 2),
+        window.innerWidth / 2,
+        window.innerHeight / 2,
+      ),
+    );
   };
   window.addEventListener('pointermove', onPointerMove, { passive: true });
 
