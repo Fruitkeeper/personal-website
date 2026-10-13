@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader.astro';
 import { site } from '../config/site';
 ---
 
-<Base title="About" description={`About ${site.name}.`}>
+<Base visual="about" title="About" description={`About ${site.name}.`}>
   <PageHeader eyebrow="About" title={`Hi, I'm ${site.name}.`} lede={site.role} />
   <section class="container about">
     <div class="bio">

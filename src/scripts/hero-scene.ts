@@ -125,7 +125,8 @@ export function mountHeroScene(canvas: HTMLCanvasElement): SceneHandle | null {
   }
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const root = document.documentElement;
+  // Colors come from the canvas's inherited CSS vars, so each page's panel can set its own palette.
+  const palette = canvas;
   const pixelRatio = Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO);
   renderer.setPixelRatio(pixelRatio);
 
@@ -141,9 +142,9 @@ export function mountHeroScene(canvas: HTMLCanvasElement): SceneHandle | null {
     uniforms: {
       uTime: { value: 0 },
       uIntensity: { value: 0.28 },
-      uColorA: { value: cssColor(root, '--accent-1', '#7c5cff') },
-      uColorB: { value: cssColor(root, '--accent-2', '#22d3ee') },
-      uColorC: { value: cssColor(root, '--accent-3', '#f472b6') },
+      uColorA: { value: cssColor(palette, '--accent-1', '#7c5cff') },
+      uColorB: { value: cssColor(palette, '--accent-2', '#22d3ee') },
+      uColorC: { value: cssColor(palette, '--accent-3', '#f472b6') },
     },
   });
   const blob = new Mesh(blobGeometry, blobMaterial);
@@ -159,7 +160,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement): SceneHandle | null {
     uniforms: {
       uTime: { value: 0 },
       uPixelRatio: { value: pixelRatio },
-      uColor: { value: cssColor(root, '--accent-2', '#22d3ee') },
+      uColor: { value: cssColor(palette, '--accent-2', '#22d3ee') },
     },
   });
   const particles = new Points(particleGeometry, particleMaterial);

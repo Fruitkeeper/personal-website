@@ -3,9 +3,6 @@ import { site } from '../config/site';
 ---
 
 <section class="hero">
-  <div class="fallback" aria-hidden="true"></div>
-  <canvas class="scene" data-hero-canvas aria-hidden="true"></canvas>
-
   <div class="container content">
     <p class="eyebrow" data-reveal>{site.role}</p>
     <h1 data-reveal style="--reveal-delay: 100ms">
@@ -23,40 +20,15 @@ import { site } from '../config/site';
   </a>
 </section>
 
-<script>
-  // Three.js is loaded on demand so text and layout paint before the ~150KB library arrives.
-  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
-  if (canvas) {
-    import('../scripts/hero-scene')
-      .then(({ mountHeroScene }) => mountHeroScene(canvas))
-      .catch((err) => console.warn('Hero scene failed to load; using CSS fallback.', err));
-  }
-</script>
-
 <style>
   .hero {
     position: relative;
-    min-height: calc(100dvh - 4rem);
     display: grid;
     align-items: center;
-    overflow: hidden;
-    isolation: isolate;
   }
-
-  .scene, .fallback { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
-
-  /* Shown while Three.js loads, and permanently if WebGL is unavailable. */
-  .fallback {
-    background:
-      radial-gradient(40% 50% at 70% 45%, rgb(124 92 255 / 0.35), transparent 70%),
-      radial-gradient(30% 40% at 80% 60%, rgb(34 211 238 / 0.25), transparent 70%),
-      radial-gradient(25% 30% at 60% 35%, rgb(244 114 182 / 0.2), transparent 70%);
-    filter: blur(20px);
-    transition: opacity 1.2s;
+  @media (min-width: 860px) {
+    .hero { min-height: calc(100dvh - var(--header-height)); }
   }
-  .scene { opacity: 0; transition: opacity 1.2s var(--ease-out); }
-  .scene[data-ready] { opacity: 1; }
-  .fallback:has(~ .scene[data-ready]) { opacity: 0; }
 
   .content { position: relative; padding-block: 4rem; pointer-events: none; }
   .content > * { pointer-events: auto; max-width: 40rem; }
@@ -80,6 +52,7 @@ import { site } from '../config/site';
   .ghost:hover { background: rgb(255 255 255 / 0.08); }
 
   .scroll-hint {
+    display: none;
     position: absolute;
     bottom: 2rem;
     left: 50%;
@@ -100,6 +73,7 @@ import { site } from '../config/site';
     background: var(--text-muted);
     animation: scroll 1.8s ease-in-out infinite;
   }
+  @media (min-width: 860px) { .scroll-hint { display: block; } }
   @keyframes scroll {
     0% { opacity: 0; transform: translateY(0); }
     40% { opacity: 1; }

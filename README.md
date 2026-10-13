@@ -26,7 +26,8 @@ Posts with `draft: true` show up in dev but are excluded from production builds.
 
 ## Graphics
 
-- **Hero** — Three.js shader blob (simplex-noise displacement, fresnel iridescence) with a particle field and pointer parallax. Lazy-loaded after first paint; pauses offscreen and in hidden tabs; renders a still frame under `prefers-reduced-motion`; CSS gradient fallback without WebGL.
+- **Split layout** — fixed 40% visual panel starts on the right and slides to the left over the first ~80% of a screen of scroll, while the 60% text column moves right (`src/lib/split.ts`, `src/scripts/split.ts`). Each page picks a palette via `<Base visual="…">` (`src/lib/visuals.ts`). Phones get the visual as a top banner; reduced-motion users get no slide.
+- **Visual panel** — Three.js shader blob (simplex-noise displacement, fresnel iridescence) with a particle field and pointer parallax. Lazy-loaded after first paint; pauses offscreen and in hidden tabs; renders a still frame under `prefers-reduced-motion`; CSS gradient fallback without WebGL.
 - **Cards** — pointer-tracking spotlight, 3D tilt, drifting gradient orbs.
 - **Global** — scroll reveals, cursor glow, film grain, shimmering gradient text.
 

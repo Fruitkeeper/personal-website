@@ -2,16 +2,20 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import VisualPanel from '../components/VisualPanel.astro';
 import { site } from '../config/site';
+import type { Visual } from '../lib/visuals';
 
 interface Props {
   title?: string;
   description?: string;
   /** Set for blog posts so link previews show the right type. */
   type?: 'website' | 'article';
+  /** Palette for the split layout's visual panel. */
+  visual?: Visual;
 }
 
-const { title, description = site.description, type = 'website' } = Astro.props;
+const { title, description = site.description, type = 'website', visual = 'home' } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} — ${site.role}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -50,12 +54,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="cursor-glow" data-cursor-glow aria-hidden="true"></div>
     <Header />
-    <main id="main">
-      <slot />
-    </main>
-    <Footer />
+    <VisualPanel visual={visual} />
+    <div class="split-content">
+      <main id="main">
+        <slot />
+      </main>
+      <Footer />
+    </div>
     <script>
       import '../scripts/interactions';
+      import '../scripts/split';
     </script>
   </body>
 </html>
@@ -89,4 +97,48 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   }
 
   main { position: relative; z-index: 1; }
+
+  /*
+   * Split layout: a fixed 40% visual panel and a 60% content column.
+   * --split (0→1, set from scroll by scripts/split.ts) slides the panel from
+   * the right edge to the left while the content moves the other way.
+   * Without JS --split is unset, so the layout simply stays in its start state.
+   */
+  :global(:root) {
+    --panel-width: 40%;
+    --content-width: 60%;
+    --header-height: 4rem;
+  }
+
+  @media (min-width: 860px) {
+    :global(.visual-panel) {
+      position: fixed;
+      top: var(--header-height);
+      bottom: 0;
+      left: var(--content-width);
+      width: var(--panel-width);
+      z-index: 0;
+      overflow: hidden;
+      /* -150% of its own 40% width = 60% of the viewport: right edge → left edge. */
+      transform: translateX(calc(var(--split, 0) * -150%));
+      opacity: var(--split-panel-opacity, 1);
+      will-change: transform, opacity;
+    }
+    .split-content {
+      width: var(--content-width);
+      /* 66.667% of its own 60% width = 40% of the viewport. */
+      transform: translateX(calc(var(--split, 0) * 66.667%));
+      will-change: transform;
+    }
+  }
+
+  /* Phones and small tablets: the visual becomes a banner above the content. */
+  @media (max-width: 859.98px) {
+    :global(.visual-panel) {
+      position: relative;
+      display: block;
+      height: 35svh;
+      overflow: hidden;
+    }
+  }
 </style>

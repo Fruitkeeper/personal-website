@@ -1,0 +1,41 @@
+---
+import { paletteStyle, type Visual } from '../lib/visuals';
+
+interface Props {
+  visual: Visual;
+}
+
+const { visual } = Astro.props;
+---
+
+<aside class="visual-panel" data-visual-panel style={paletteStyle(visual)} aria-hidden="true">
+  <div class="fallback"></div>
+  <canvas class="scene" data-hero-canvas></canvas>
+</aside>
+
+<script>
+  // Three.js is loaded on demand so text and layout paint before the ~130KB library arrives.
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+  if (canvas) {
+    import('../scripts/hero-scene')
+      .then(({ mountHeroScene }) => mountHeroScene(canvas))
+      .catch((err) => console.warn('Visual panel scene failed to load; using CSS fallback.', err));
+  }
+</script>
+
+<style>
+  .scene, .fallback { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* Shown while Three.js loads, and permanently if WebGL is unavailable. */
+  .fallback {
+    background:
+      radial-gradient(45% 35% at 50% 45%, color-mix(in srgb, var(--accent-1) 40%, transparent), transparent 70%),
+      radial-gradient(35% 30% at 60% 58%, color-mix(in srgb, var(--accent-2) 30%, transparent), transparent 70%),
+      radial-gradient(30% 25% at 40% 38%, color-mix(in srgb, var(--accent-3) 25%, transparent), transparent 70%);
+    filter: blur(20px);
+    transition: opacity 1.2s;
+  }
+  .scene { opacity: 0; transition: opacity 1.2s var(--ease-out); }
+  .scene[data-ready] { opacity: 1; }
+  .fallback:has(~ .scene[data-ready]) { opacity: 0; }
+</style>
