@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Not found">
+  <section class="container notfound">
+    <p class="code gradient-text">404</p>
+    <h1>Lost in space.</h1>
+    <p>This page drifted off somewhere. Let's get you back.</p>
+    <a href="/" class="arrow-link"><span>←</span> Home</a>
+  </section>
+</Base>
+
+<style>
+  .notfound { min-height: 70dvh; display: grid; place-content: center; text-align: center; }
+  .code { font-family: var(--font-display); font-size: clamp(6rem, 25vw, 12rem); font-weight: 700; line-height: 1; margin: 0; }
+  .arrow-link { justify-content: center; }
+</style>

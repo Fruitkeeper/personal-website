@@ -1,0 +1,92 @@
+---
+import type { Project } from '../config/site';
+import { accentOf, isExternal } from '../lib/projects';
+
+interface Props {
+  project: Project;
+  index?: number;
+}
+
+const { project, index = 0 } = Astro.props;
+const [from, to] = accentOf(project);
+const external = isExternal(project.href);
+const Tag = project.href ? 'a' : 'div';
+---
+
+<Tag
+  class="card"
+  href={project.href}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  data-spotlight
+  data-tilt
+  data-reveal
+  style={`--from: ${from}; --to: ${to}; --reveal-delay: ${index * 80}ms`}
+>
+  <div class="orb" aria-hidden="true"></div>
+  <div class="body">
+    <h3>
+      {project.title}
+      {project.href && <span class="arrow" aria-hidden="true">↗</span>}
+      {external && <span class="sr-only">(opens in a new tab)</span>}
+    </h3>
+    <p>{project.description}</p>
+    <ul class="tags" aria-label="Technologies">
+      {project.tags.map((t) => <li class="tag">{t}</li>)}
+    </ul>
+  </div>
+</Tag>
+
+<style>
+  .card {
+    --mx: 50%;
+    --my: 50%;
+    --rx: 0deg;
+    --ry: 0deg;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    text-decoration: none;
+    color: inherit;
+    transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+    transition: transform 0.4s var(--ease-out), border-color 0.3s;
+    min-height: 15rem;
+  }
+  .card:hover { color: inherit; border-color: color-mix(in srgb, var(--from) 50%, transparent); }
+
+  /* Gradient border-glow + spotlight that tracks the pointer. */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(500px circle at var(--mx) var(--my), color-mix(in srgb, var(--from) 22%, transparent), transparent 45%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .orb {
+    position: absolute;
+    width: 14rem;
+    height: 14rem;
+    right: -4rem;
+    top: -5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--from), var(--to));
+    filter: blur(50px);
+    opacity: 0.35;
+    transition: transform 0.8s var(--ease-out), opacity 0.4s;
+  }
+  .card:hover .orb { transform: translate(-1.5rem, 1.5rem) scale(1.15); opacity: 0.55; }
+
+  .body { position: relative; padding: 1.75rem; display: flex; flex-direction: column; height: 100%; }
+  h3 { display: flex; align-items: center; gap: 0.4rem; }
+  .arrow { font-size: 1rem; transition: transform 0.3s var(--ease-out); }
+  .card:hover .arrow { transform: translate(3px, -3px); }
+  p { color: var(--text-muted); flex: 1; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 0.5rem 0 0; }
+</style>
