@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import VisualPanel from '../components/VisualPanel.astro';
+import Background from '../components/Background.astro';
 import { site } from '../config/site';
 import type { Visual } from '../lib/visuals';
 
@@ -52,7 +53,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <div class="cursor-glow" data-cursor-glow aria-hidden="true"></div>
+    <Background />
     <Header />
     <VisualPanel visual={visual} />
     <div class="split-content">
@@ -82,19 +83,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   }
   .skip-link:focus { top: 1rem; }
 
-  .cursor-glow {
-    position: fixed;
-    top: -300px;
-    left: -300px;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0;
-    background: radial-gradient(circle, rgb(124 92 255 / 0.12), transparent 60%);
-    transition: opacity 0.4s;
-  }
 
   main { position: relative; z-index: 1; }
 

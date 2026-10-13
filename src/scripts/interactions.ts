@@ -1,5 +1,5 @@
-// Lightweight DOM effects shared by every page: scroll reveal, card spotlight
-// and tilt, and the ambient cursor glow. All of them no-op under reduced motion.
+// Lightweight DOM effects shared by every page: scroll reveal and card
+// spotlight/tilt. Motion-heavy parts no-op under reduced motion.
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -47,24 +47,6 @@ function setupCards() {
   });
 }
 
-function setupCursorGlow() {
-  const glow = document.querySelector<HTMLElement>('[data-cursor-glow]');
-  if (!glow || !finePointer() || reducedMotion()) return;
-  let frame = 0;
-  window.addEventListener(
-    'pointermove',
-    (e) => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-        glow.style.opacity = '1';
-      });
-    },
-    { passive: true },
-  );
-  document.addEventListener('pointerleave', () => (glow.style.opacity = '0'));
-}
 
 setupReveal();
 setupCards();
-setupCursorGlow();

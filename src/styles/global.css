@@ -1,6 +1,8 @@
 :root {
   --bg: #07070c;
-  --bg-elevated: #0f0f17;
+  /* Translucent surface so the nebula background glows through cards. */
+  --glass: rgb(15 15 23 / 0.55);
+  --glass-blur: blur(14px) saturate(140%);
   --surface: rgba(255, 255, 255, 0.04);
   --border: rgba(255, 255, 255, 0.09);
   --text: #ecebf3;
@@ -125,4 +127,10 @@ pre { border-radius: var(--radius); padding: 1.25rem; overflow-x: auto; border: 
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .js [data-reveal] { opacity: 1; transform: none; }
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }

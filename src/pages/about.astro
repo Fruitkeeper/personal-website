@@ -10,7 +10,7 @@ import { site } from '../config/site';
     <div class="bio">
       {site.bio.map((paragraph, i) => <p data-reveal style={`--reveal-delay: ${i * 80}ms`}>{paragraph}</p>)}
     </div>
-    <aside class="card" data-reveal data-spotlight>
+    <aside class="card glass" data-reveal data-spotlight>
       <dl>
         <dt>Based in</dt>
         <dd>{site.location}</dd>
@@ -31,7 +31,7 @@ import { site } from '../config/site';
   .about { display: grid; gap: 3rem; grid-template-columns: minmax(0, 1fr); padding-bottom: 6rem; }
   @media (min-width: 860px) { .about { grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr); align-items: start; } }
   .bio p { font-size: 1.15rem; }
-  .card { padding: 1.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elevated); }
+  .card { padding: 1.75rem; border: 1px solid var(--border); border-radius: var(--radius); }
   dl { margin: 0; display: grid; gap: 0.35rem; }
   dt { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-top: 0.85rem; }
   dt:first-child { margin-top: 0; }

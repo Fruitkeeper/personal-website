@@ -14,7 +14,7 @@ const Tag = project.href ? 'a' : 'div';
 ---
 
 <Tag
-  class="card"
+  class="card glass"
   href={project.href}
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener noreferrer' : undefined}
@@ -48,7 +48,6 @@ const Tag = project.href ? 'a' : 'div';
     overflow: hidden;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    background: var(--bg-elevated);
     text-decoration: none;
     color: inherit;
     transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
