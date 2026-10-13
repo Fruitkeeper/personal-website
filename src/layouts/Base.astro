@@ -1,8 +1,7 @@
 ---
 import '../styles/tailwind.css';
 import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Credits from '../components/Credits.astro';
 import { site } from '../config/site';
 
 interface Props {
@@ -13,7 +12,7 @@ interface Props {
 }
 
 const { title, description = site.description, type = 'website' } = Astro.props;
-const pageTitle = title ? `${title} · ${site.name}` : `${site.name} — ${site.role}`;
+const pageTitle = title ? `${title} · ${site.name}` : site.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -28,7 +27,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="alternate" type="application/rss+xml" title={`${site.name} — Writing`} href="/rss.xml" />
     <meta name="theme-color" content="#07070c" />
 
     <meta property="og:type" content={type} />
@@ -44,35 +42,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
     />
 
-    <!-- Runs before paint so reveal animations never flash content without JS. -->
-    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <Header />
     <main id="main">
       <slot />
     </main>
-    <Footer />
-    <script>
-      import '../scripts/interactions';
-    </script>
+    <Credits />
   </body>
 </html>
 
 <style>
-  .skip-link {
-    position: absolute;
-    left: 1rem;
-    top: -3rem;
-    z-index: 200;
-    padding: 0.5rem 1rem;
-    background: var(--text);
-    color: var(--bg);
-    border-radius: 0.5rem;
-    transition: top 0.2s;
-  }
-  .skip-link:focus { top: 1rem; }
-
   main { position: relative; z-index: 1; }
 </style>

@@ -1,40 +1,25 @@
 # Personal website
 
-Astro portfolio and blog with a 3D sad toaster in the hero (Three.js), plus React/shadcn/ui + Tailwind v4 available for components. Deployed on Vercel.
+A single full-screen page: a 3D sad toaster robot (Three.js) whose head follows your cursor. Built with Astro; deployed on Vercel.
 
-## Make it yours
-
-| What                      | Where                                   |
-| ------------------------- | --------------------------------------- |
-| Name, bio, links, projects | `src/config/site.ts`                   |
-| Domain (for RSS/sitemap)  | `SITE_URL` in `astro.config.mjs`        |
-| Colors & fonts            | `:root` tokens in `src/styles/global.css` |
-| Blog posts                | `src/content/blog/*.md`                 |
-| Hero 3D model             | `public/models/sad-toaster.glb`, scene in `src/scripts/toaster-scene.ts` |
-| Asset credits (footer)    | `credits` in `src/config/site.ts`       |
-| shadcn/ui components      | `src/components/ui/` (`npx shadcn add …`) |
-
-Posts with `draft: true` show up in dev but are excluded from production builds.
+> The earlier full site (header, projects, blog, about, RSS) is preserved at the git tag `full-site-before-strip`:
+> `git checkout full-site-before-strip -- src tests` restores its files.
 
 ## Commands
 
-| Command          | Does                                         |
-| ---------------- | -------------------------------------------- |
-| `npm run dev`    | Dev server at http://localhost:4321          |
-| `npm test`       | Unit tests (Vitest)                          |
-| `npm run check`  | Type-check `.astro` and `.ts` files          |
-| `npm run verify` | check + test + production build              |
-| `npm run build`  | Build static site to `dist/`                 |
+| Command               | Does                                             |
+| --------------------- | ------------------------------------------------ |
+| `npm run dev`         | Dev server at http://localhost:4321              |
+| `npm test`            | Unit tests (Vitest)                              |
+| `npm run check`       | Type-check `.astro` and `.ts` files              |
+| `npm run verify`      | check + test + production build                  |
+| `npm run build`       | Build static site to `dist/`                     |
+| `npm run build:model` | Rebuild `public/models/sad-toaster.glb` from the source model |
 
-## Graphics
+## The toaster
 
-- **Hero toaster** — glTF model rendered with Three.js, lazy-loaded after first paint. The head turns to follow the cursor (the body stays put), bobs gently, hops when clicked. Paused offscreen and in hidden tabs; still frame under `prefers-reduced-motion`; glow placeholder if WebGL or the model fails.
-- **Cards** — pointer-tracking spotlight, 3D tilt, drifting gradient orbs.
-- **Global** — scroll reveals, film grain, shimmering gradient text, glass cards.
-
-## Deploy (Vercel)
-
-Astro is auto-detected, no config needed. Either push to GitHub and import the repo at vercel.com/new, or run `vercel` from this folder.
+- Scene: `src/scripts/toaster-scene.ts` (pure math in `src/lib/toaster.ts`), mounted by `src/components/Toaster.astro`.
+- Only the head turns toward the cursor; the body bobs and hops when clicked. Paused in hidden tabs; still frame under `prefers-reduced-motion`; glow placeholder if WebGL or the model fails.
 
 ## The 3D model
 

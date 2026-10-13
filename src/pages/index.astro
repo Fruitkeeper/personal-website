@@ -1,38 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
-import ProjectGrid from '../components/ProjectGrid.astro';
-import PostList from '../components/PostList.astro';
-import { projects } from '../config/site';
-import { featuredProjects } from '../lib/projects';
-import { getPosts } from '../lib/content';
-
-const LATEST_POST_COUNT = 3;
-const latest = (await getPosts()).slice(0, LATEST_POST_COUNT);
+import Toaster from '../components/Toaster.astro';
 ---
 
 <Base>
-  <Hero />
-
-  <section id="featured" class="section container">
-    <div class="section-header" data-reveal>
-      <div>
-        <p class="eyebrow">Selected work</p>
-        <h2>Things I've built</h2>
-      </div>
-      <a href="/projects" class="arrow-link">All projects <span>→</span></a>
-    </div>
-    <ProjectGrid projects={featuredProjects(projects)} />
-  </section>
-
-  <section class="section container">
-    <div class="section-header" data-reveal>
-      <div>
-        <p class="eyebrow">Writing</p>
-        <h2>Latest notes</h2>
-      </div>
-      <a href="/blog" class="arrow-link">All posts <span>→</span></a>
-    </div>
-    <PostList posts={latest} />
-  </section>
+  <h1 class="sr-only">Your Name</h1>
+  <Toaster />
 </Base>
