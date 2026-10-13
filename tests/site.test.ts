@@ -32,6 +32,7 @@ describe('projects', () => {
     for (const p of projects) {
       expect(p.title && p.summary && p.description).toBeTruthy();
       expect(p.tags.length).toBeGreaterThan(0);
+      expect(p.color).toMatch(/^#[0-9a-f]{6}$/i);
     }
   });
   it('uses absolute https links', () => {

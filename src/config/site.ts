@@ -11,6 +11,8 @@ export type Project = {
   tags: string[];
   /** Public links only — a private repo would 404 for visitors. */
   links?: Link[];
+  /** Planet color (hex). */
+  color: string;
 };
 
 /**
@@ -41,6 +43,7 @@ export const projects: Project[] = [
     description:
       'A fantasy football game with LaLiga-scale player pricing and leagues. Django + django-ninja API on PostgreSQL, and an Expo / React Native mobile app.',
     tags: ['Django', 'React Native', 'PostgreSQL'],
+    color: '#f472b6',
   },
   {
     title: 'Internal Tools Portal',
@@ -48,6 +51,7 @@ export const projects: Project[] = [
     description:
       'A shared platform for internal tools — server-side role checks, an append-only audit log, maker-checker approvals and an app registry — with a KYC review app built on top. New apps plug in without touching existing ones.',
     tags: ['TypeScript', 'Platform', 'Fintech'],
+    color: '#22d3ee',
     links: [{ label: 'GitHub', href: 'https://github.com/Fruitkeeper/internal-tool-devin-demo' }],
   },
   {
@@ -56,6 +60,7 @@ export const projects: Project[] = [
     description:
       'A simulation environment for Crazyflie quadcopters: runs headless in Docker, with a controller loop and a GUI streamed over VNC.',
     tags: ['Robotics', 'Simulation', 'Docker'],
+    color: '#facc15',
   },
   {
     title: 'This website',
@@ -63,6 +68,7 @@ export const projects: Project[] = [
     description:
       'Astro + Three.js. The sad toaster model was split at the neck in a build step so only its head turns to follow your cursor; your projects orbit around it.',
     tags: ['Astro', 'Three.js', 'WebGL'],
+    color: '#a78bfa',
   },
 ];
 

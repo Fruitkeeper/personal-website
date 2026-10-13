@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Stars from '../components/Stars.astro';
 import Toaster from '../components/Toaster.astro';
 import Orbit from '../components/Orbit.astro';
 import Contact from '../components/Contact.astro';
@@ -8,6 +9,7 @@ import { site } from '../config/site';
 
 <Base>
   <h1 class="sr-only">{site.name}</h1>
+  <Stars />
   <Toaster />
   <Orbit />
   <Contact />
