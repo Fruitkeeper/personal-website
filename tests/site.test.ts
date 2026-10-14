@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { chess, contact, credits, magic, markets, planets, site } from '../src/config/site';
+import { chess, contact, credits, magic, markets, widgets, site } from '../src/config/site';
 
 describe('site config', () => {
-  it('has a name and description', () => {
+  it('has a name, tagline and description', () => {
     expect(site.name).toBeTruthy();
     expect(site.description).toBeTruthy();
+    expect(site.tagline.length).toBeGreaterThan(0);
+    expect(site.tagline.length).toBeLessThanOrEqual(60);
   });
   it('uses absolute https URLs for profiles', () => {
     expect(contact.github).toMatch(/^https:\/\/github\.com\/[^/]+$/);
@@ -16,31 +18,31 @@ describe('site config', () => {
   });
 });
 
-describe('planets', () => {
-  it('has between 2 and 8 planets, so the system neither looks empty nor crowded', () => {
-    expect(planets.length).toBeGreaterThanOrEqual(2);
-    expect(planets.length).toBeLessThanOrEqual(8);
+describe('widgets', () => {
+  it('has between 2 and 8 widgets, so the layout neither looks empty nor crowded', () => {
+    expect(widgets.length).toBeGreaterThanOrEqual(2);
+    expect(widgets.length).toBeLessThanOrEqual(8);
   });
   it('has unique titles (they become element ids)', () => {
-    const titles = planets.map((p) => p.title);
+    const titles = widgets.map((p) => p.title);
     expect(new Set(titles).size).toBe(titles.length);
   });
-  it('keeps hover summaries short', () => {
-    for (const p of planets) expect(p.summary.length).toBeLessThanOrEqual(40);
+  it('keeps summaries short', () => {
+    for (const p of widgets) expect(p.summary.length).toBeLessThanOrEqual(40);
   });
-  it('gives every planet a hex color', () => {
-    for (const p of planets) expect(p.color).toMatch(/^#[0-9a-f]{6}$/i);
+  it('gives every widget a hex color', () => {
+    for (const p of widgets) expect(p.color).toMatch(/^#[0-9a-f]{6}$/i);
   });
-  it('fills in project planets completely, with absolute https links', () => {
-    for (const p of planets) {
+  it('fills in project widgets completely, with absolute https links', () => {
+    for (const p of widgets) {
       if (p.kind !== 'project') continue;
       expect(p.description).toBeTruthy();
       expect(p.tags.length).toBeGreaterThan(0);
       for (const l of p.links ?? []) expect(l.href).toMatch(/^https:\/\//);
     }
   });
-  it('has at most one planet of each interactive kind', () => {
-    const kinds = planets.filter((p) => p.kind !== 'project').map((p) => p.kind);
+  it('has at most one widget of each interactive kind', () => {
+    const kinds = widgets.filter((p) => p.kind !== 'project').map((p) => p.kind);
     expect(new Set(kinds).size).toBe(kinds.length);
   });
 });

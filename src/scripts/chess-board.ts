@@ -1,45 +1,22 @@
-// Chess planet board: today's Lichess puzzle on a click-to-move board.
-// Lazy-loaded by scripts/chess.ts the first time the planet opens, so
+// Chess widget board: today's Lichess puzzle on a click-to-move board.
+// Lazy-loaded by scripts/chess.ts the first time the widget opens, so
 // chess.js never weighs on the initial page. Puzzle logic: src/lib/chess-puzzle.ts.
 import { Chess, type Square } from 'chess.js';
 import { parsePuzzle, playReply, prettyTheme, promotionFor, splitUci, tryMove, type Puzzle } from '../lib/chess-puzzle';
 import { HOP_EVENT } from '../lib/toaster';
+import { fetchDailyRaw, markSolved } from './chess';
 
-const DAILY_URL = 'https://lichess.org/api/puzzle/daily';
-const CACHE_KEY = 'chess:daily:v1';
 const REPLY_DELAY_MS = 450;
 const FILES = 'abcdefgh';
 // Solid glyphs for both sides (colored by CSS). U+FE0E keeps ♟ from turning into an emoji.
-const GLYPH: Record<string, string> = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟︎' };
+const GLYPH: Record<string, string> = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟\uFE0E' };
 const NAME: Record<string, string> = { k: 'king', q: 'queen', r: 'rook', b: 'bishop', n: 'knight', p: 'pawn' };
 const WRONG = ['Not that one — the toaster expected better.', 'Nope. Even the toaster saw that one.', 'Try again — think forcing.'];
 
-const today = () => new Date().toISOString().slice(0, 10);
-
-function readCache(): Puzzle | null {
-  try {
-    const c = JSON.parse(localStorage.getItem(CACHE_KEY) ?? 'null');
-    return c?.date === today() ? parsePuzzle({ puzzle: c.puzzle }) : null;
-  } catch {
-    return null;
-  }
-}
-function writeCache(puzzle: Puzzle) {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ date: today(), puzzle }));
-  } catch {
-    /* storage unavailable */
-  }
-}
-
+/** Today's puzzle, sharing the widget's per-day cache of the raw response. */
 async function loadPuzzle(): Promise<Puzzle> {
-  const cached = readCache();
-  if (cached) return cached;
-  const res = await fetch(DAILY_URL, { headers: { accept: 'application/json' } });
-  if (!res.ok) throw new Error(`Lichess ${res.status}`);
-  const puzzle = parsePuzzle(await res.json());
+  const puzzle = parsePuzzle(await fetchDailyRaw());
   if (!puzzle) throw new Error('Unexpected puzzle data');
-  writeCache(puzzle);
   return puzzle;
 }
 
@@ -144,6 +121,7 @@ export function setupChess(root: HTMLElement, dialog: HTMLDialogElement) {
     if (result === 'solved') {
       solved = true;
       status.textContent = 'Solved! The toaster is impressed. 🎉';
+      markSolved(puzzle.id);
       window.dispatchEvent(new CustomEvent(HOP_EVENT));
       return render();
     }
@@ -222,6 +200,6 @@ export function setupChess(root: HTMLElement, dialog: HTMLDialogElement) {
   };
 
   init();
-  // If loading failed, try again the next time the planet is opened.
+  // If loading failed, try again the next time the widget is opened.
   new MutationObserver(() => dialog.open && init()).observe(dialog, { attributes: true, attributeFilter: ['open'] });
 }

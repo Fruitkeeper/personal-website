@@ -1,4 +1,4 @@
-// Pure logic for the Magic planet (scripts/magic.ts): which cards a booster
+// Pure logic for the Magic widget (scripts/magic.ts): which cards a booster
 // asks Scryfall for, and parsing Scryfall's card objects.
 
 export type Card = {

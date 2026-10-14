@@ -88,3 +88,15 @@ export function moodPose(mood: number): { pitch: number; bobAmplitude: number; b
     bobSpeed: 1.4 * (1 + 0.5 * m),
   };
 }
+
+/** Viewport width below which the layout stacks (keep in sync with the CSS breakpoint). */
+export const STACKED_BELOW = 900;
+
+/**
+ * Empty space around the toaster when framing it (0.15 = tight). Side-by-side
+ * layouts leave room for the widgets around it; stacked (phone) layouts have
+ * the toaster on its own, so it can fill its block.
+ */
+export function frameMargin(viewportWidth: number): number {
+  return viewportWidth < STACKED_BELOW ? 0.3 : 1.1;
+}

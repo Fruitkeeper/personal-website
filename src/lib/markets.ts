@@ -1,4 +1,4 @@
-// Pure logic for the Markets planet (scripts/markets.ts): parsing CoinGecko's
+// Pure logic for the Markets widget (scripts/markets.ts): parsing CoinGecko's
 // /coins/markets response, the toaster's mood, sparklines and formatting.
 
 export type Coin = {
@@ -53,7 +53,7 @@ export function moodLabel(mood: number): string {
   return 'devastated';
 }
 
-/** Planet color for a mood: green up, red down, slate when flat. */
+/** Widget color for a mood: green up, red down, slate when flat. */
 export function moodColor(mood: number): string {
   if (mood >= 0.1) return '#34d399';
   if (mood <= -0.1) return '#f87171';

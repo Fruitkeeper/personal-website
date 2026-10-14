@@ -1,0 +1,21 @@
+<div class="row">
+  <span class="stack" aria-hidden="true"><i></i><i></i><i></i></span>
+  <p class="last">Last rare: <strong data-last-pull>none yet</strong></p>
+</div>
+
+<style>
+  .row { display: flex; align-items: center; gap: 0.8rem; }
+  .stack { position: relative; width: 1.9rem; height: 2.6rem; flex: none; }
+  .stack i {
+    position: absolute;
+    inset: 0;
+    border-radius: 0.2rem;
+    background: radial-gradient(ellipse 38% 46% at 50% 50%, #c58b3f, #6b3f1c 70%, #2a1a0f 72%);
+    border: 1.5px solid #1a0f08;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+  }
+  .stack i:nth-child(1) { transform: rotate(-10deg) translateX(-3px); }
+  .stack i:nth-child(3) { transform: rotate(9deg) translateX(3px); }
+  .last { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+  .last strong { color: var(--text); font-weight: 600; }
+</style>

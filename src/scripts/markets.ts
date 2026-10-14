@@ -1,5 +1,5 @@
-// Markets planet: fetches prices from CoinGecko, renders the panel, recolors
-// the planet, and broadcasts the toaster's mood. Pure logic in src/lib/markets.ts.
+// Markets widget: fetches prices from CoinGecko, renders the panel, recolors
+// the widget, and broadcasts the toaster's mood. Pure logic in src/lib/markets.ts.
 import {
   formatChange,
   formatPrice,
@@ -94,6 +94,21 @@ function message(list: HTMLElement, text: string, className: string) {
   list.replaceChildren(li);
 }
 
+/** The small Markets widget: mood plus a price/change row per coin. */
+function updateWidget(coins: Coin[], mood: string) {
+  const moodEl = document.querySelector<HTMLElement>('[data-mw-mood]');
+  if (moodEl) moodEl.textContent = mood;
+  for (const coin of coins) {
+    const row = document.querySelector<HTMLElement>(`[data-mw-coin="${coin.id}"]`);
+    if (!row) continue;
+    row.querySelector<HTMLElement>('[data-mw-sym]')!.textContent = coin.symbol;
+    row.querySelector<HTMLElement>('[data-mw-price]')!.textContent = formatPrice(coin.price);
+    const change = row.querySelector<HTMLElement>('[data-mw-change]')!;
+    change.textContent = formatChange(coin.change24h);
+    change.className = `chg ${coin.change24h >= 0 ? 'up' : 'down'}`;
+  }
+}
+
 export function mountMarkets() {
   const panel = document.querySelector<HTMLElement>('[data-markets]');
   if (!panel) return;
@@ -101,8 +116,8 @@ export function mountMarkets() {
   const list = panel.querySelector<HTMLElement>('[data-coin-list]')!;
   const label = panel.querySelector<HTMLElement>('[data-mood-label]')!;
   const avg = panel.querySelector<HTMLElement>('[data-mood-change]')!;
-  // The planet and its dialog both take the mood color.
-  const tinted = document.querySelectorAll<HTMLElement>('[data-planet-kind="markets"]');
+  // The widget and its dialog both take the mood color.
+  const tinted = document.querySelectorAll<HTMLElement>('[data-widget-kind="markets"]');
   const cacheKey = `${CACHE_KEY}:${ids.join(',')}`;
 
   const show = (coins: Coin[]) => {
@@ -111,7 +126,8 @@ export function mountMarkets() {
     label.textContent = moodLabel(mood);
     const avgChange = coins.reduce((s, c) => s + c.change24h, 0) / coins.length;
     avg.textContent = `(${formatChange(avgChange)} avg, 24h)`;
-    for (const el of tinted) el.style.setProperty('--planet', moodColor(mood));
+    for (const el of tinted) el.style.setProperty('--widget', moodColor(mood));
+    updateWidget(coins, moodLabel(mood));
     document.documentElement.dataset.mood = mood.toFixed(3);
     window.dispatchEvent(new CustomEvent(MOOD_EVENT, { detail: { mood } }));
   };
@@ -130,6 +146,7 @@ export function mountMarkets() {
       else {
         message(list, 'Markets are unreachable right now. The toaster is sad anyway.', 'error');
         label.textContent = 'his usual sad self';
+        updateWidget([], 'his usual sad self');
       }
     }
   };

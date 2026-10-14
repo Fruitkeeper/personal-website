@@ -1,9 +1,22 @@
-// Magic planet: open a 5-card booster of real cards from Scryfall, revealed
+// Magic widget: open a 5-card booster of real cards from Scryfall, revealed
 // one by one, rare last with a foil shimmer. Pure logic in src/lib/magic.ts.
 import { REQUEST_GAP_MS, boosterQueries, parseCard, type Card } from '../lib/magic';
 import { HOP_EVENT } from '../lib/toaster';
 
 const API = 'https://api.scryfall.com';
+const LAST_PULL_KEY = 'magic:last-pull';
+
+/** Remember the latest rare pull for the small widget (storage may be unavailable). */
+function showLastPull(name?: string) {
+  try {
+    if (name) localStorage.setItem(LAST_PULL_KEY, name);
+    name ??= localStorage.getItem(LAST_PULL_KEY) ?? undefined;
+  } catch {
+    /* ignore */
+  }
+  if (!name) return;
+  for (const el of document.querySelectorAll('[data-last-pull]')) el.textContent = name;
+}
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function scryfall(path: string): Promise<Card> {
@@ -49,6 +62,7 @@ function cardSlot(): { li: HTMLLIElement; reveal: (card: Card) => Promise<void>;
 }
 
 export function mountMagic() {
+  showLastPull();
   const root = document.querySelector<HTMLElement>('[data-magic]');
   if (!root) return;
   const pack = root.querySelector<HTMLButtonElement>('[data-open-pack]')!;
@@ -92,6 +106,7 @@ export function mountMagic() {
     if (!got) status.textContent = "Scryfall didn't answer — the pack was empty. Try again in a moment.";
     else if (best) {
       status.textContent = `${best.rarity === 'mythic' ? 'MYTHIC' : 'Rare'} pull: ${best.name}!`;
+      showLastPull(best.name);
       window.dispatchEvent(new CustomEvent(HOP_EVENT));
     } else status.textContent = 'Nice pack.';
     again.hidden = false;

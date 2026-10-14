@@ -1,0 +1,25 @@
+---
+import type { Widget } from '../../config/site';
+
+interface Props {
+  widget: Extract<Widget, { kind: 'project' }>;
+}
+
+const { widget } = Astro.props;
+---
+
+<ul class="tags" aria-label="Technologies">
+  {widget.tags.map((t) => <li>{t}</li>)}
+</ul>
+
+<style>
+  .tags { display: flex; flex-wrap: wrap; gap: 0.3rem; list-style: none; padding: 0; margin: 0; }
+  li {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.15em 0.55em;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+</style>

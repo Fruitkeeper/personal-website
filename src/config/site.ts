@@ -2,17 +2,20 @@
 
 export type Link = { label: string; href: string };
 
-type PlanetBase = {
+type WidgetBase = {
   title: string;
-  /** One line, shown on hover. */
+  /** One line, shown on the widget. */
   summary: string;
-  /** Planet color (hex). The markets planet recolors itself by mood. */
+  /** Accent color (hex). The markets widget recolors itself by mood. */
   color: string;
 };
 
-/** Each planet is a different kind of experience; `kind` picks the panel it opens. */
-export type Planet =
-  | (PlanetBase & {
+/**
+ * Each widget is a different kind of experience; `kind` picks what it shows
+ * and the panel it opens. Widgets alternate left/right of the toaster in order.
+ */
+export type Widget =
+  | (WidgetBase & {
       kind: 'project';
       /** A few sentences, shown when opened. */
       description: string;
@@ -20,12 +23,12 @@ export type Planet =
       /** Public links only — a private repo would 404 for visitors. */
       links?: Link[];
     })
-  | (PlanetBase & { kind: 'markets' })
-  | (PlanetBase & { kind: 'basketball' })
-  | (PlanetBase & { kind: 'chess' })
-  | (PlanetBase & { kind: 'magic' });
+  | (WidgetBase & { kind: 'markets' })
+  | (WidgetBase & { kind: 'basketball' })
+  | (WidgetBase & { kind: 'chess' })
+  | (WidgetBase & { kind: 'magic' });
 
-export type PlanetKind = Planet['kind'];
+export type WidgetKind = Widget['kind'];
 
 /**
  * Third-party assets that require attribution. Currently only emitted as
@@ -35,7 +38,9 @@ export type Credit = { work: string; author: string; href: string; license: stri
 
 export const site = {
   name: 'Luis Gomez-Acebo',
-  description: 'Personal website of Luis Gomez-Acebo.',
+  // Shown under your name. Keep it to one short line.
+  tagline: 'Builder. Into chess, hoops, Magic and markets.',
+  description: 'Personal website of Luis Gomez-Acebo — builder, into chess, basketball, Magic: The Gathering and markets.',
 } as const;
 
 export const contact = {
@@ -47,7 +52,7 @@ export const contact = {
   email: 'gomez.acebo.luis@gmail.com',
 } as const;
 
-export const planets: Planet[] = [
+export const widgets: Widget[] = [
   {
     kind: 'markets',
     title: 'Markets',
@@ -83,19 +88,19 @@ export const planets: Planet[] = [
   },
 ];
 
-/** Coins the Markets planet tracks (CoinGecko ids). Their average 24h move sets the toaster's mood. */
+/** Coins the Markets widget tracks (CoinGecko ids). Their average 24h move sets the toaster's mood. */
 export const markets = {
   coins: ['bitcoin', 'ethereum'],
 } as const;
 
-/** Chess planet. Set your Lichess username to show your ratings (empty hides them). */
+/** Chess widget. Set your Lichess username to show your ratings (empty hides them). */
 export const chess = {
   // TODO: your Lichess username.
   lichess: '',
 } as const;
 
 /**
- * Magic planet. Set `favorite` to a card's exact English name to guarantee it
+ * Magic widget. Set `favorite` to a card's exact English name to guarantee it
  * in every pack (replacing a common), with your note shown under the pack.
  */
 export const magic = {

@@ -1,4 +1,4 @@
-// Puzzle logic for the Chess planet (scripts/chess.ts), on top of chess.js.
+// Puzzle logic for the Chess widget (scripts/chess.ts), on top of chess.js.
 import { Chess, type Square } from 'chess.js';
 
 export type Puzzle = {

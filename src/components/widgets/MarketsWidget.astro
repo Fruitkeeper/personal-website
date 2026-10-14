@@ -1,0 +1,31 @@
+---
+import { markets } from '../../config/site';
+
+// Placeholder tickers until live data arrives (the API's own symbols then show).
+const KNOWN: Record<string, string> = { bitcoin: 'BTC', ethereum: 'ETH', solana: 'SOL' };
+const ticker = (id: string) => KNOWN[id] ?? id.slice(0, 4).toUpperCase();
+---
+
+<p class="mood">Toaster mood: <strong data-mw-mood>…</strong></p>
+<ul class="rows">
+  {
+    markets.coins.map((id) => (
+      <li data-mw-coin={id}>
+        <span class="sym" data-mw-sym>{ticker(id)}</span>
+        <span class="price" data-mw-price>—</span>
+        <span class="chg" data-mw-change />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .mood { margin: 0 0 0.5rem; font-size: 0.8rem; color: var(--text-muted); }
+  .mood strong { color: var(--widget); font-weight: 600; transition: color 1s; }
+  .rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
+  li { display: grid; grid-template-columns: 2.6rem 1fr auto; align-items: baseline; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8rem; }
+  .sym { font-family: var(--font-display); font-weight: 600; }
+  .price { color: var(--text); }
+  .chg :global(.up), .chg.up { color: #34d399; }
+  .chg.down { color: #f87171; }
+</style>

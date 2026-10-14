@@ -120,3 +120,15 @@ describe('moodPose', () => {
     expect(moodPose(NaN)).toEqual(moodPose(0));
   });
 });
+
+import { STACKED_BELOW, frameMargin } from '../src/lib/toaster';
+
+describe('frameMargin', () => {
+  it('frames tighter when the layout stacks (phones)', () => {
+    expect(frameMargin(390)).toBeLessThan(frameMargin(1440));
+  });
+  it('switches exactly at the breakpoint', () => {
+    expect(frameMargin(STACKED_BELOW - 1)).toBe(frameMargin(390));
+    expect(frameMargin(STACKED_BELOW)).toBe(frameMargin(1440));
+  });
+});

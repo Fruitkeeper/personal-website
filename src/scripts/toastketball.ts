@@ -1,4 +1,4 @@
-// Toast-ketball: a canvas mini-game in the basketball planet's dialog.
+// Toast-ketball: a canvas mini-game in the basketball widget's panel.
 // Physics in src/lib/toastketball.ts; this file handles input, drawing and score.
 import {
   AIM_ANGLE,
@@ -57,6 +57,8 @@ export function mountToastketball() {
   const stats = { makes: 0, shots: 0, streak: 0, best: readBest() };
   const renderStats = () => {
     for (const [k, v] of Object.entries(stats)) stat(k).textContent = String(v);
+    // The small widget shows the best streak too.
+    for (const el of document.querySelectorAll('[data-best-streak]')) el.textContent = String(stats.best);
   };
   renderStats();
 

@@ -1,0 +1,208 @@
+---
+import { widgets } from '../config/site';
+import { splitColumns } from '../lib/columns';
+import { slugify } from '../lib/slug';
+import MarketsWidget from './widgets/MarketsWidget.astro';
+import ChessWidget from './widgets/ChessWidget.astro';
+import BasketballWidget from './widgets/BasketballWidget.astro';
+import MagicWidget from './widgets/MagicWidget.astro';
+import ProjectWidget from './widgets/ProjectWidget.astro';
+import ProjectPanel from './panels/ProjectPanel.astro';
+import MarketsPanel from './panels/MarketsPanel.astro';
+import BasketballPanel from './panels/BasketballPanel.astro';
+import ChessPanel from './panels/ChessPanel.astro';
+import MagicPanel from './panels/MagicPanel.astro';
+
+const items = widgets.map((w) => ({ ...w, id: `widget-${slugify(w.title)}` }));
+const { left, right } = splitColumns(items);
+const CTA: Record<string, string> = { markets: 'Open', basketball: 'Play', chess: 'Solve', magic: 'Open a pack', project: 'Details' };
+---
+
+<section class="widgets" aria-label="Things to explore">
+  {
+    [left, right].map((column, c) => (
+      <div class:list={['col', c === 0 ? 'left' : 'right']}>
+        {column.map((w, i) => (
+          <button
+            type="button"
+            class="widget"
+            data-widget-kind={w.kind}
+            data-open-dialog={w.id}
+            aria-haspopup="dialog"
+            aria-controls={w.id}
+            style={`--widget: ${w.color}; --delay: ${(c + i * 2) * 70 + 300}ms`}
+          >
+            <span class="head">
+              <span class="dot" aria-hidden="true" />
+              <span class="title">{w.title}</span>
+              <span class="cta" aria-hidden="true">{CTA[w.kind]} →</span>
+            </span>
+            <span class="summary">{w.summary}</span>
+            <span class="body">
+              {w.kind === 'markets' && <MarketsWidget />}
+              {w.kind === 'chess' && <ChessWidget />}
+              {w.kind === 'basketball' && <BasketballWidget />}
+              {w.kind === 'magic' && <MagicWidget />}
+              {w.kind === 'project' && <ProjectWidget widget={w} />}
+            </span>
+          </button>
+        ))}
+      </div>
+    ))
+  }
+</section>
+
+{
+  items.map((w) => (
+    <dialog id={w.id} class="panel" aria-labelledby={`${w.id}-title`} data-widget-kind={w.kind} style={`--widget: ${w.color}`}>
+      <form method="dialog">
+        <button class="close" aria-label="Close">×</button>
+      </form>
+      <h2 id={`${w.id}-title`}>
+        <span class="dot" aria-hidden="true" />
+        {w.title}
+      </h2>
+      {w.kind === 'project' && <ProjectPanel widget={w} />}
+      {w.kind === 'markets' && <MarketsPanel />}
+      {w.kind === 'basketball' && <BasketballPanel />}
+      {w.kind === 'chess' && <ChessPanel />}
+      {w.kind === 'magic' && <MagicPanel />}
+    </dialog>
+  ))
+}
+
+<script>
+  import { mountDialogs } from '../scripts/dialogs';
+  import { mountMarkets } from '../scripts/markets';
+  import { mountToastketball } from '../scripts/toastketball';
+  import { mountChess } from '../scripts/chess';
+  import { mountMagic } from '../scripts/magic';
+  mountDialogs();
+  mountMarkets();
+  mountToastketball();
+  mountChess();
+  mountMagic();
+</script>
+
+<style>
+  /*
+   * Desktop: two columns of widgets either side of the toaster (which is a
+   * fixed full-screen stage behind, centered). Phones: a 2-up grid below it.
+   */
+  .widgets {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(14rem, 17rem) 1fr minmax(14rem, 17rem);
+    align-items: center;
+    padding: 7rem clamp(1.25rem, 3.5vw, 2.5rem) 2rem;
+    pointer-events: none;
+  }
+  .col { display: grid; gap: 1rem; pointer-events: auto; }
+  .left { grid-column: 1; }
+  /* Leave room for the contact dock in the bottom-right corner. */
+  .right { grid-column: 3; margin-right: 4rem; align-self: start; margin-top: 4vh; }
+
+  .widget {
+    display: grid;
+    gap: 0.45rem;
+    width: 100%;
+    padding: 0.95rem 1.05rem 1rem;
+    text-align: left;
+    color: var(--text);
+    font: inherit;
+    background: rgb(18 18 30 / 0.58);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 12px 30px -16px rgb(0 0 0 / 0.7);
+    cursor: pointer;
+    transition: transform 0.35s var(--ease-out), border-color 0.3s, box-shadow 0.3s;
+    animation: pop-in 0.7s var(--delay, 0ms) var(--ease-out) both;
+  }
+  @keyframes pop-in { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
+  .widget:hover, .widget:focus-visible {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--widget) 55%, transparent);
+    box-shadow: 0 16px 40px -14px color-mix(in srgb, var(--widget) 45%, transparent);
+  }
+  .widget:focus-visible { outline: 2px solid var(--widget); outline-offset: 3px; }
+
+  .head { display: flex; align-items: center; gap: 0.5rem; }
+  .dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--widget);
+    box-shadow: 0 0 10px var(--widget);
+    flex: none;
+    transition: background 1s, box-shadow 1s;
+  }
+  .title { font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; }
+  .cta {
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.25s, transform 0.3s var(--ease-out);
+  }
+  .widget:hover .cta, .widget:focus-visible .cta { opacity: 1; transform: none; color: var(--widget); }
+  .summary { font-size: 0.8rem; color: var(--text-muted); }
+  .body { display: block; padding-top: 0.45rem; border-top: 1px solid rgb(255 255 255 / 0.06); }
+
+  @media (max-width: 899.98px) {
+    .widgets {
+      position: relative;
+      inset: auto;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+      align-items: stretch;
+      gap: 0.9rem;
+      padding: 0 1.25rem 2rem;
+    }
+    .col { display: contents; }
+    .right { margin: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .widget { animation: none; }
+  }
+
+  /* Panels (dialogs) */
+  .panel {
+    /* Tailwind's preflight zeroes margins; restore the UA centering for modals. */
+    margin: auto;
+    width: min(32rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+    padding: 2rem;
+    color: var(--text);
+    background: rgb(16 16 26 / 0.9);
+    border: 1px solid color-mix(in srgb, var(--widget) 30%, var(--border));
+    border-radius: var(--radius);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.8), 0 0 60px -30px var(--widget);
+  }
+  .panel[open] { animation: panel-in 0.35s var(--ease-out); }
+  .panel::backdrop { background: rgb(4 4 8 / 0.55); backdrop-filter: blur(3px); }
+  @keyframes panel-in { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
+  .panel h2 { display: flex; align-items: center; gap: 0.6rem; font-size: 1.6rem; margin: 0 0 1rem; }
+  .panel h2 .dot { width: 0.7rem; height: 0.7rem; }
+  .close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .close:hover { color: var(--text); background: var(--surface); }
+</style>

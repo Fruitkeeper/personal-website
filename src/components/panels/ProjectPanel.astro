@@ -1,21 +1,21 @@
 ---
-import type { Planet } from '../../config/site';
+import type { Widget } from '../../config/site';
 
 interface Props {
-  planet: Extract<Planet, { kind: 'project' }>;
+  widget: Extract<Widget, { kind: 'project' }>;
 }
 
-const { planet } = Astro.props;
+const { widget } = Astro.props;
 ---
 
-<p>{planet.description}</p>
+<p>{widget.description}</p>
 <ul class="tags" aria-label="Technologies">
-  {planet.tags.map((t) => <li>{t}</li>)}
+  {widget.tags.map((t) => <li>{t}</li>)}
 </ul>
 {
-  planet.links && planet.links.length > 0 && (
+  widget.links && widget.links.length > 0 && (
     <p class="links">
-      {planet.links.map((l) => (
+      {widget.links.map((l) => (
         <a href={l.href} target="_blank" rel="noopener noreferrer">
           {l.label} ↗
         </a>
@@ -36,5 +36,5 @@ const { planet } = Astro.props;
     color: var(--text-muted);
   }
   .links { margin: 1.25rem 0 0; display: flex; gap: 1rem; }
-  .links a { color: var(--planet); text-decoration: none; font-weight: 500; }
+  .links a { color: var(--widget); text-decoration: none; font-weight: 500; }
 </style>
