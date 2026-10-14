@@ -18,7 +18,7 @@ const { left, right } = splitColumns(items);
 const CTA: Record<string, string> = { markets: 'Open', basketball: 'Play', chess: 'Solve', magic: 'Open a pack', project: 'Details' };
 ---
 
-<section class="widgets" aria-label="Things to explore" data-after-intro>
+<section class="widgets" aria-label="Things to explore">
   {
     [left, right].map((column, c) => (
       <div class:list={['col', c === 0 ? 'left' : 'right']}>

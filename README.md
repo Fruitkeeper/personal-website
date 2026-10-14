@@ -37,10 +37,6 @@ Everything personal is in `src/config/site.ts`:
 - **External data**: CoinGecko, Lichess and Scryfall public APIs, called from the browser (no keys). Each panel degrades gracefully when its API is unreachable.
 - **Contact dock** (`src/components/Contact.astro`, `src/scripts/contact.ts`, math in `src/lib/magnet.ts`): GitHub, LinkedIn, X, email — magnetic buttons with a spinning gradient ring and slide-out labels. Clicking email copies the address (falls back to `mailto:`).
 
-## Intro
-
-On load, the lamp (`src/components/ui/lamp.tsx`, a shadcn-style component rendered by `LampIntro.tsx` with framer-motion) lights up and the toaster rises into it. The page is locked (hidden UI, `inert` body) for ≥2s and until the rise finishes, capped at 4.5s (`src/lib/intro.ts`); an inline script in `pages/index.astro` applies the lock before first paint, with a 6s safety release. Reduced-motion visitors skip it entirely (the lamp island isn't even hydrated).
-
 ## The toaster
 
 - Scene: `src/scripts/toaster-scene.ts` (pure math in `src/lib/toaster.ts`), mounted by `src/components/Toaster.astro`.

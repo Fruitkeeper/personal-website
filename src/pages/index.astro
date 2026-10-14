@@ -5,35 +5,12 @@ import Intro from '../components/Intro.astro';
 import Toaster from '../components/Toaster.astro';
 import Widgets from '../components/Widgets.astro';
 import Contact from '../components/Contact.astro';
-import LampIntro from '../components/LampIntro';
 ---
 
 <Base>
-  <!--
-    Lock the page for the intro before anything paints: hide the UI (CSS keys
-    off .intro-pending) and make it inert. Skipped for reduced motion.
-    scripts/intro.ts releases it; the timeout is a safety net in case that
-    script never runs.
-  -->
-  <script is:inline>
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.documentElement.classList.add('intro-pending');
-      document.body.inert = true;
-      setTimeout(function () {
-        document.documentElement.classList.remove('intro-pending');
-        document.body.inert = false;
-      }, 6000);
-    }
-  </script>
   <Stars />
-  <LampIntro client:media="(prefers-reduced-motion: no-preference)" />
   <Intro />
   <Toaster />
   <Widgets />
   <Contact />
 </Base>
-
-<script>
-  import { mountIntro } from '../scripts/intro';
-  mountIntro();
-</script>
