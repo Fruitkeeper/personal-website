@@ -21,6 +21,7 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { RISE_MS, TOASTER_READY_EVENT, riseOffset } from '../lib/intro';
 import { HOP_DURATION, HOP_EVENT, MOOD_EVENT, fitDistance, frameMargin, headAngles, hopOffset, idleYaw, moodPose } from '../lib/toaster';
 
 const MODEL_URL = '/models/sad-toaster.glb';
@@ -143,6 +144,8 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
   head?.rotation.set(0, 0, 0, 'YZX');
 
   const lookAtY = modelSize.y * 0.5;
+  /** How far below its spot the toaster starts the intro rise. */
+  const riseDepth = modelSize.y * 1.3;
 
   const resize = () => {
     const { clientWidth: w, clientHeight: h } = canvas;
@@ -180,6 +183,9 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
   window.addEventListener('pointermove', onPointerMove, { passive: true });
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  // Rise in only while the page-load intro is running (and motion is allowed).
+  const rising = document.documentElement.classList.contains('intro-pending') && !reducedMotion.matches;
+  const riseStart = elapsed; // the model just loaded: rise from now
 
   // Market mood (scripts/markets.ts): read what's already known, then follow updates.
   let pose = moodPose(Number(document.documentElement.dataset.mood ?? 0));
@@ -206,6 +212,8 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
     eased.yaw += (look.yaw - eased.yaw) * 0.08;
     eased.pitch += (look.pitch - eased.pitch) * 0.08;
     const lift = hopOffset(elapsed - hopStart) * HOP_HEIGHT;
+    // Intro: rise up from below into the lamp light (0 once done or skipped).
+    const rise = rising ? riseOffset(elapsed - riseStart, RISE_MS / 1000) : 0;
     // Ease toward the mood pose so a market update reads as a sigh, not a snap.
     for (const k of ['pitch', 'bobAmplitude', 'bobSpeed'] as const) easedPose[k] += (pose[k] - easedPose[k]) * (still ? 1 : 0.02);
     const bob = still ? 0 : Math.sin(elapsed * easedPose.bobSpeed) * easedPose.bobAmplitude;
@@ -214,11 +222,12 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
       head.rotation.y = eased.yaw + (still ? 0 : idleYaw(elapsed, IDLE_HEAD_YAW));
       head.rotation.z = eased.pitch + easedPose.pitch;
     }
-    rig.position.y = lift + bob;
-    // Shadow shrinks and fades as the toaster leaves the ground.
+    rig.position.y = lift + bob + rise * riseDepth;
+    // Shadow shrinks and fades as the toaster leaves the ground, and only
+    // appears once it has (nearly) risen into place.
     const away = 1 - Math.min(1, (lift + bob) / HOP_HEIGHT) * 0.5;
     shadow.scale.setScalar(away);
-    (shadow.material as MeshBasicMaterial).opacity = away;
+    (shadow.material as MeshBasicMaterial).opacity = Math.min(away, Math.max(0, 1 + rise * 3));
 
     renderer.render(scene, camera);
   };
@@ -257,6 +266,7 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
   render(); // reduced motion keeps this still frame
   start();
   canvas.dataset.ready = 'true';
+  window.dispatchEvent(new CustomEvent(TOASTER_READY_EVENT));
 
   return {
     dispose() {

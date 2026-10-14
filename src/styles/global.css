@@ -93,3 +93,33 @@ pre { border-radius: var(--radius); padding: 1.25rem; overflow-x: auto; border: 
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
+
+/* ── Page-load intro (scripts/intro.ts) ───────────────────────────────────
+   While html.intro-pending: the UI is hidden and its entrance animations
+   wait at their first frame; they play when the class is removed. */
+[data-after-intro] { transition: opacity 0.5s ease; }
+.intro-pending [data-after-intro] { opacity: 0; }
+.intro-pending [data-after-intro],
+.intro-pending [data-after-intro] * { animation-play-state: paused !important; }
+
+.lamp-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 1.2s ease;
+}
+html:not(.intro-pending) .lamp-intro { opacity: 0; }
+/* Same color as the lamp's own panels, so its edges never show when scaled. */
+.lamp-intro { background: #020617; }
+/* Put the lamp's light line just above the toaster's head. */
+.lamp-intro > * { translate: 0 -6vh; }
+@media (max-width: 899.98px) {
+  /* Phones: the toaster sits in a block near the top, and the lamp is wider
+     than the screen, so shrink it and move it up over the toaster. */
+  .lamp-intro > * { translate: 0 -24svh; }
+  /* Shrink the light itself, not the container: scaling the container would
+     shrink its overflow clip too and cut the glow off with hard edges.
+     (transform composes with the scale-y the component sets via `scale`.) */
+  .lamp-intro > * > :first-child { transform: scale(0.62); }
+}
