@@ -5,6 +5,9 @@
  */
 export const MOOD_EVENT = 'toaster:mood';
 
+/** Any part of the page can make the toaster hop (e.g. a Toast-ketball make). */
+export const HOP_EVENT = 'toaster:hop';
+
 // Pure math for the hero toaster scene (scripts/toaster-scene.ts), kept
 // free of three.js so it can be unit tested.
 

@@ -21,7 +21,7 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { HOP_DURATION, MOOD_EVENT, fitDistance, headAngles, hopOffset, idleYaw, moodPose } from '../lib/toaster';
+import { HOP_DURATION, HOP_EVENT, MOOD_EVENT, fitDistance, headAngles, hopOffset, idleYaw, moodPose } from '../lib/toaster';
 
 const MODEL_URL = '/models/sad-toaster.glb';
 const FOV = 35;
@@ -197,12 +197,14 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
 
   // Clicking the toaster makes it hop.
   let hopStart = -Infinity;
-  const onPointerDown = () => {
+  const hop = () => {
     if (reducedMotion.matches) return;
     if (elapsed - hopStart > HOP_DURATION * 0.6) hopStart = elapsed;
     start();
   };
+  const onPointerDown = hop;
   canvas.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener(HOP_EVENT, hop);
 
   const render = () => {
     const still = reducedMotion.matches;
@@ -269,6 +271,7 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener(MOOD_EVENT, onMood);
       canvas.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener(HOP_EVENT, hop);
       document.removeEventListener('visibilitychange', onVisibility);
       reducedMotion.removeEventListener('change', onMotionPref);
       disposeTree(scene);

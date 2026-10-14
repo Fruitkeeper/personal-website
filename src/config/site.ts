@@ -20,7 +20,8 @@ export type Planet =
       /** Public links only — a private repo would 404 for visitors. */
       links?: Link[];
     })
-  | (PlanetBase & { kind: 'markets' });
+  | (PlanetBase & { kind: 'markets' })
+  | (PlanetBase & { kind: 'basketball' });
 
 export type PlanetKind = Planet['kind'];
 
@@ -50,6 +51,12 @@ export const planets: Planet[] = [
     title: 'Markets',
     summary: "The toaster's mood follows crypto",
     color: '#94a3b8',
+  },
+  {
+    kind: 'basketball',
+    title: 'Toast-ketball',
+    summary: 'Flick toast into the slot',
+    color: '#fb923c',
   },
   {
     kind: 'project',

@@ -3,6 +3,7 @@ import { planets } from '../config/site';
 import { slugify } from '../lib/slug';
 import ProjectPanel from './planets/ProjectPanel.astro';
 import MarketsPanel from './planets/MarketsPanel.astro';
+import BasketballPanel from './planets/BasketballPanel.astro';
 
 const items = planets.map((p) => ({ ...p, id: `planet-${slugify(p.title)}` }));
 ---
@@ -36,6 +37,7 @@ const items = planets.map((p) => ({ ...p, id: `planet-${slugify(p.title)}` }));
       <h2 id={`${p.id}-title`}>{p.title}</h2>
       {p.kind === 'project' && <ProjectPanel planet={p} />}
       {p.kind === 'markets' && <MarketsPanel />}
+      {p.kind === 'basketball' && <BasketballPanel />}
     </dialog>
   ))
 }
@@ -43,8 +45,10 @@ const items = planets.map((p) => ({ ...p, id: `planet-${slugify(p.title)}` }));
 <script>
   import { mountOrbit } from '../scripts/orbit';
   import { mountMarkets } from '../scripts/markets';
+  import { mountToastketball } from '../scripts/toastketball';
   mountOrbit();
   mountMarkets();
+  mountToastketball();
 </script>
 
 <style>

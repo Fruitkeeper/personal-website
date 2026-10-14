@@ -1,0 +1,38 @@
+<div class="game" data-toastketball>
+  <dl class="hud">
+    <div><dt>Makes</dt><dd data-stat="makes">0</dd></div>
+    <div><dt>Shots</dt><dd data-stat="shots">0</dd></div>
+    <div><dt>Streak</dt><dd data-stat="streak">0</dd></div>
+    <div><dt>Best</dt><dd data-stat="best">0</dd></div>
+  </dl>
+  <canvas
+    tabindex="0"
+    aria-label="Toast-ketball court. Flick the toast toward the toaster, or use arrow keys to aim and Enter to shoot."
+    aria-describedby="toastketball-help"
+  ></canvas>
+  <p class="call" data-call aria-live="polite">Flick the toast into the slot.</p>
+  <p class="help" id="toastketball-help">
+    Drag and release the toast. Keyboard: ←/→ angle, ↑/↓ power, Enter to shoot.
+  </p>
+</div>
+
+<style>
+  .hud { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin: 0 0 0.75rem; }
+  .hud div { padding: 0.4rem 0.5rem; border: 1px solid var(--border); border-radius: 0.6rem; text-align: center; }
+  dt { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+  dd { margin: 0; font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; }
+  canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 0.8rem;
+    border: 1px solid var(--border);
+    background: radial-gradient(120% 90% at 50% 0%, #1b1b2e, #0b0b14);
+    touch-action: none;
+    cursor: grab;
+  }
+  canvas:active { cursor: grabbing; }
+  canvas:focus-visible { outline: 2px solid var(--planet); outline-offset: 3px; }
+  .call { min-height: 1.5em; margin: 0.75rem 0 0; font-weight: 600; color: var(--planet); }
+  .help { margin: 0.25rem 0 0; font-size: 0.75rem; color: var(--text-muted); }
+</style>
