@@ -1,8 +1,10 @@
 ---
-import { projects } from '../config/site';
+import { planets } from '../config/site';
 import { slugify } from '../lib/slug';
+import ProjectPanel from './planets/ProjectPanel.astro';
+import MarketsPanel from './planets/MarketsPanel.astro';
 
-const items = projects.map((p) => ({ ...p, id: `project-${slugify(p.title)}` }));
+const items = planets.map((p) => ({ ...p, id: `planet-${slugify(p.title)}` }));
 ---
 
 <!-- Orbit lines; sized by scripts/orbit.ts. Behind the toaster (z 0), whose canvas is transparent. -->
@@ -10,10 +12,10 @@ const items = projects.map((p) => ({ ...p, id: `project-${slugify(p.title)}` }))
   {items.map(() => <ellipse cx="50%" cy="50%" rx="0" ry="0" />)}
 </svg>
 
-<ul class="orbit" aria-label="Projects">
+<ul class="orbit" aria-label="Planets">
   {
     items.map((p) => (
-      <li class="orbit-item" data-orbit-item style={`--planet: ${p.color}`}>
+      <li class="orbit-item" data-orbit-item data-planet-kind={p.kind} style={`--planet: ${p.color}`}>
         <button type="button" class="planet-btn" aria-haspopup="dialog" aria-controls={p.id} data-open-dialog={p.id}>
           <span class="planet" aria-hidden="true" />
           <span class="name">{p.title}</span>
@@ -26,32 +28,23 @@ const items = projects.map((p) => ({ ...p, id: `project-${slugify(p.title)}` }))
 
 {
   items.map((p) => (
-    <dialog id={p.id} class="project" aria-labelledby={`${p.id}-title`} style={`--planet: ${p.color}`}>
+    <dialog id={p.id} class="project" aria-labelledby={`${p.id}-title`} data-planet-kind={p.kind} style={`--planet: ${p.color}`}>
       <form method="dialog">
         <button class="close" aria-label="Close">×</button>
       </form>
       <span class="planet dialog-planet" aria-hidden="true" />
       <h2 id={`${p.id}-title`}>{p.title}</h2>
-      <p>{p.description}</p>
-      <ul class="tags" aria-label="Technologies">
-        {p.tags.map((t) => <li>{t}</li>)}
-      </ul>
-      {p.links && p.links.length > 0 && (
-        <p class="links">
-          {p.links.map((l) => (
-            <a href={l.href} target="_blank" rel="noopener noreferrer">
-              {l.label} ↗
-            </a>
-          ))}
-        </p>
-      )}
+      {p.kind === 'project' && <ProjectPanel planet={p} />}
+      {p.kind === 'markets' && <MarketsPanel />}
     </dialog>
   ))
 }
 
 <script>
   import { mountOrbit } from '../scripts/orbit';
+  import { mountMarkets } from '../scripts/markets';
   mountOrbit();
+  mountMarkets();
 </script>
 
 <style>
@@ -101,6 +94,7 @@ const items = projects.map((p) => ({ ...p, id: `project-${slugify(p.title)}` }))
   /* A lit sphere: highlight top-left, the planet's color, shadow bottom-right, plus a glow. */
   .planet {
     display: block;
+    transition: background 1.5s, box-shadow 1.5s;
     width: var(--size, 2.6rem);
     aspect-ratio: 1;
     border-radius: 50%;
@@ -172,7 +166,6 @@ const items = projects.map((p) => ({ ...p, id: `project-${slugify(p.title)}` }))
   .dialog-planet { --size: 2.4rem; margin-bottom: 1rem; }
 
   .project h2 { font-size: 1.75rem; margin-bottom: 0.75rem; }
-  .project p { color: var(--text-muted); }
   .close {
     position: absolute;
     top: 0.75rem;
@@ -188,15 +181,4 @@ const items = projects.map((p) => ({ ...p, id: `project-${slugify(p.title)}` }))
     cursor: pointer;
   }
   .close:hover { color: var(--text); background: var(--surface); }
-  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem 0 0; }
-  .tags li {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    padding: 0.2em 0.65em;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-  }
-  .links { margin: 1.25rem 0 0; display: flex; gap: 1rem; }
-  .links a { color: var(--planet); text-decoration: none; font-weight: 500; }
 </style>

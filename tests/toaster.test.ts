@@ -98,3 +98,25 @@ describe('headAngles', () => {
     expect(headAngles(dx, dy, rx, ry)).toEqual({ yaw: 0, pitch: 0 });
   });
 });
+
+import { moodPose } from '../src/lib/toaster';
+
+describe('moodPose', () => {
+  it('is the default pose when neutral', () => {
+    expect(moodPose(0)).toEqual({ pitch: 0, bobAmplitude: 0.03, bobSpeed: 1.4 });
+  });
+  it('droops the head when markets are down, perks it up when up', () => {
+    expect(moodPose(-1).pitch).toBeLessThan(0);
+    expect(moodPose(1).pitch).toBeGreaterThan(0);
+    expect(Math.abs(moodPose(-1).pitch)).toBeGreaterThan(moodPose(1).pitch);
+  });
+  it('bobs livelier when happy, sluggish when sad', () => {
+    expect(moodPose(1).bobSpeed).toBeGreaterThan(moodPose(0).bobSpeed);
+    expect(moodPose(-1).bobAmplitude).toBeLessThan(moodPose(0).bobAmplitude);
+    expect(moodPose(-1).bobAmplitude).toBeGreaterThan(0);
+  });
+  it('clamps and handles bad input', () => {
+    expect(moodPose(5)).toEqual(moodPose(1));
+    expect(moodPose(NaN)).toEqual(moodPose(0));
+  });
+});

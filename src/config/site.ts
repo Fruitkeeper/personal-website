@@ -2,18 +2,27 @@
 
 export type Link = { label: string; href: string };
 
-export type Project = {
+type PlanetBase = {
   title: string;
-  /** One line, shown on the orbiting card. */
+  /** One line, shown on hover. */
   summary: string;
-  /** A few sentences, shown when the card is opened. */
-  description: string;
-  tags: string[];
-  /** Public links only — a private repo would 404 for visitors. */
-  links?: Link[];
-  /** Planet color (hex). */
+  /** Planet color (hex). The markets planet recolors itself by mood. */
   color: string;
 };
+
+/** Each planet is a different kind of experience; `kind` picks the panel it opens. */
+export type Planet =
+  | (PlanetBase & {
+      kind: 'project';
+      /** A few sentences, shown when opened. */
+      description: string;
+      tags: string[];
+      /** Public links only — a private repo would 404 for visitors. */
+      links?: Link[];
+    })
+  | (PlanetBase & { kind: 'markets' });
+
+export type PlanetKind = Planet['kind'];
 
 /**
  * Third-party assets that require attribution. Currently only emitted as
@@ -35,42 +44,28 @@ export const contact = {
   email: 'gomez.acebo.luis@gmail.com',
 } as const;
 
-// Drafted from ~/Desktop/ideas — review the wording before publishing.
-export const projects: Project[] = [
+export const planets: Planet[] = [
   {
+    kind: 'markets',
+    title: 'Markets',
+    summary: "The toaster's mood follows crypto",
+    color: '#94a3b8',
+  },
+  {
+    kind: 'project',
     title: 'Mister Manager',
-    summary: 'Fantasy football manager',
+    summary: 'Fantasy football, priced like a market',
     description:
-      'A fantasy football game with LaLiga-scale player pricing and leagues. Django + django-ninja API on PostgreSQL, and an Expo / React Native mobile app.',
+      'A fantasy football game where player prices move like a market, at LaLiga scale, with leagues. Django + django-ninja API on PostgreSQL, and an Expo / React Native mobile app.',
     tags: ['Django', 'React Native', 'PostgreSQL'],
     color: '#f472b6',
   },
-  {
-    title: 'Internal Tools Portal',
-    summary: 'Fintech internal-tools platform',
-    description:
-      'A shared platform for internal tools — server-side role checks, an append-only audit log, maker-checker approvals and an app registry — with a KYC review app built on top. New apps plug in without touching existing ones.',
-    tags: ['TypeScript', 'Platform', 'Fintech'],
-    color: '#22d3ee',
-    links: [{ label: 'GitHub', href: 'https://github.com/Fruitkeeper/internal-tool-devin-demo' }],
-  },
-  {
-    title: 'Crazyflie Sim',
-    summary: 'Drone simulation',
-    description:
-      'A simulation environment for Crazyflie quadcopters: runs headless in Docker, with a controller loop and a GUI streamed over VNC.',
-    tags: ['Robotics', 'Simulation', 'Docker'],
-    color: '#facc15',
-  },
-  {
-    title: 'This website',
-    summary: 'A toaster that watches you',
-    description:
-      'Astro + Three.js. The sad toaster model was split at the neck in a build step so only its head turns to follow your cursor; your projects orbit around it.',
-    tags: ['Astro', 'Three.js', 'WebGL'],
-    color: '#a78bfa',
-  },
 ];
+
+/** Coins the Markets planet tracks (CoinGecko ids). Their average 24h move sets the toaster's mood. */
+export const markets = {
+  coins: ['bitcoin', 'ethereum'],
+} as const;
 
 export const credits: Credit[] = [
   {

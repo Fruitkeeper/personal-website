@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { contact, credits, projects, site } from '../src/config/site';
+import { contact, credits, markets, planets, site } from '../src/config/site';
 
 describe('site config', () => {
   it('has a name and description', () => {
@@ -16,27 +16,39 @@ describe('site config', () => {
   });
 });
 
-describe('projects', () => {
-  it('has between 2 and 8 projects, so the orbit neither looks empty nor overlaps', () => {
-    expect(projects.length).toBeGreaterThanOrEqual(2);
-    expect(projects.length).toBeLessThanOrEqual(8);
+describe('planets', () => {
+  it('has between 2 and 8 planets, so the system neither looks empty nor crowded', () => {
+    expect(planets.length).toBeGreaterThanOrEqual(2);
+    expect(planets.length).toBeLessThanOrEqual(8);
   });
   it('has unique titles (they become element ids)', () => {
-    const titles = projects.map((p) => p.title);
+    const titles = planets.map((p) => p.title);
     expect(new Set(titles).size).toBe(titles.length);
   });
-  it('keeps card summaries short enough for the orbit chip', () => {
-    for (const p of projects) expect(p.summary.length).toBeLessThanOrEqual(40);
+  it('keeps hover summaries short', () => {
+    for (const p of planets) expect(p.summary.length).toBeLessThanOrEqual(40);
   });
-  it('fills in every field', () => {
-    for (const p of projects) {
-      expect(p.title && p.summary && p.description).toBeTruthy();
+  it('gives every planet a hex color', () => {
+    for (const p of planets) expect(p.color).toMatch(/^#[0-9a-f]{6}$/i);
+  });
+  it('fills in project planets completely, with absolute https links', () => {
+    for (const p of planets) {
+      if (p.kind !== 'project') continue;
+      expect(p.description).toBeTruthy();
       expect(p.tags.length).toBeGreaterThan(0);
-      expect(p.color).toMatch(/^#[0-9a-f]{6}$/i);
+      for (const l of p.links ?? []) expect(l.href).toMatch(/^https:\/\//);
     }
   });
-  it('uses absolute https links', () => {
-    for (const p of projects) for (const l of p.links ?? []) expect(l.href).toMatch(/^https:\/\//);
+  it('has at most one planet of each interactive kind', () => {
+    const kinds = planets.filter((p) => p.kind !== 'project').map((p) => p.kind);
+    expect(new Set(kinds).size).toBe(kinds.length);
+  });
+});
+
+describe('markets config', () => {
+  it('tracks at least one coin, by lowercase CoinGecko id', () => {
+    expect(markets.coins.length).toBeGreaterThan(0);
+    for (const id of markets.coins) expect(id).toMatch(/^[a-z0-9-]+$/);
   });
 });
 

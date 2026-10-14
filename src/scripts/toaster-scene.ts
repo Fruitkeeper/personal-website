@@ -21,7 +21,7 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { HOP_DURATION, fitDistance, headAngles, hopOffset, idleYaw } from '../lib/toaster';
+import { HOP_DURATION, MOOD_EVENT, fitDistance, headAngles, hopOffset, idleYaw, moodPose } from '../lib/toaster';
 
 const MODEL_URL = '/models/sad-toaster.glb';
 const FOV = 35;
@@ -186,6 +186,15 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  // Market mood (scripts/markets.ts): read what's already known, then follow updates.
+  let pose = moodPose(Number(document.documentElement.dataset.mood ?? 0));
+  const easedPose = { ...pose };
+  const onMood = (e: Event) => {
+    pose = moodPose((e as CustomEvent<{ mood: number }>).detail.mood);
+    if (!frame) render();
+  };
+  window.addEventListener(MOOD_EVENT, onMood);
+
   // Clicking the toaster makes it hop.
   let hopStart = -Infinity;
   const onPointerDown = () => {
@@ -200,11 +209,13 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
     eased.yaw += (look.yaw - eased.yaw) * 0.08;
     eased.pitch += (look.pitch - eased.pitch) * 0.08;
     const lift = hopOffset(elapsed - hopStart) * HOP_HEIGHT;
-    const bob = still ? 0 : Math.sin(elapsed * 1.4) * 0.03;
+    // Ease toward the mood pose so a market update reads as a sigh, not a snap.
+    for (const k of ['pitch', 'bobAmplitude', 'bobSpeed'] as const) easedPose[k] += (pose[k] - easedPose[k]) * (still ? 1 : 0.02);
+    const bob = still ? 0 : Math.sin(elapsed * easedPose.bobSpeed) * easedPose.bobAmplitude;
 
     if (head) {
       head.rotation.y = eased.yaw + (still ? 0 : idleYaw(elapsed, IDLE_HEAD_YAW));
-      head.rotation.z = eased.pitch;
+      head.rotation.z = eased.pitch + easedPose.pitch;
     }
     rig.position.y = lift + bob;
     // Shadow shrinks and fades as the toaster leaves the ground.
@@ -256,6 +267,7 @@ export async function mountToasterScene(canvas: HTMLCanvasElement): Promise<Scen
       intersection.disconnect();
       resizeObserver.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener(MOOD_EVENT, onMood);
       canvas.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('visibilitychange', onVisibility);
       reducedMotion.removeEventListener('change', onMotionPref);

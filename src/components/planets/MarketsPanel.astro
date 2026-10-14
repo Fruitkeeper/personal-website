@@ -1,0 +1,47 @@
+---
+import { markets } from '../../config/site';
+---
+
+<div class="markets" data-markets data-coins={markets.coins.join(',')}>
+  <p class="mood">
+    The toaster is feeling <strong data-mood-label>…</strong>
+    <span class="avg" data-mood-change></span>
+  </p>
+  <ul class="coins" data-coin-list aria-live="polite">
+    <li class="loading">Checking the markets…</li>
+  </ul>
+  <p class="foot">
+    His mood follows the average 24h move. Prices refresh every few minutes. Data by{' '}
+    <a href="https://www.coingecko.com" target="_blank" rel="noopener">CoinGecko</a>.
+  </p>
+</div>
+
+<style>
+  .mood { color: var(--text-muted); margin-bottom: 1rem; }
+  .mood strong { color: var(--planet); font-weight: 600; }
+  .avg { font-family: var(--font-mono); font-size: 0.85rem; margin-left: 0.25rem; }
+
+  .coins { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+  .coins :global(li) {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.8rem;
+    background: rgb(255 255 255 / 0.02);
+  }
+  .coins :global(.loading), .coins :global(.error) { display: block; color: var(--text-muted); font-size: 0.9rem; }
+  .coins :global(.sym) { font-family: var(--font-display); font-weight: 600; }
+  .coins :global(.name) { display: block; font-size: 0.75rem; color: var(--text-muted); }
+  .coins :global(svg) { width: 100%; max-width: 9rem; height: 2rem; justify-self: center; overflow: visible; }
+  .coins :global(path) { fill: none; stroke-width: 1.5; stroke-linejoin: round; }
+  .coins :global(.up) { color: #34d399; }
+  .coins :global(.down) { color: #f87171; }
+  .coins :global(.nums) { text-align: right; font-family: var(--font-mono); font-size: 0.85rem; }
+  .coins :global(.change) { display: block; font-size: 0.75rem; }
+
+  .foot { margin: 1rem 0 0; font-size: 0.75rem; color: var(--text-muted); }
+  .foot a { color: inherit; }
+</style>

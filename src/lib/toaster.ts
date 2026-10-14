@@ -1,3 +1,10 @@
+/**
+ * Market mood broadcast: scripts/markets.ts writes the mood to
+ * <html data-mood> and dispatches this event; the toaster scene reads the
+ * attribute on mount (it loads later) and listens for updates.
+ */
+export const MOOD_EVENT = 'toaster:mood';
+
 // Pure math for the hero toaster scene (scripts/toaster-scene.ts), kept
 // free of three.js so it can be unit tested.
 
@@ -62,5 +69,19 @@ export function headAngles(
   return {
     yaw: clamp(dx / reachX, -1, 1) * MAX_HEAD_YAW,
     pitch: up * (up > 0 ? MAX_HEAD_PITCH_UP : MAX_HEAD_PITCH_DOWN),
+  };
+}
+
+/**
+ * How the toaster carries itself for a market mood in [-1, 1]: the head
+ * droops when markets are down and perks up when they're up, and the idle
+ * bob gets livelier or more sluggish.
+ */
+export function moodPose(mood: number): { pitch: number; bobAmplitude: number; bobSpeed: number } {
+  const m = Number.isFinite(mood) ? Math.max(-1, Math.min(1, mood)) : 0;
+  return {
+    pitch: m < 0 ? m * 0.28 : m * 0.12,
+    bobAmplitude: 0.03 * (1 + 0.6 * m),
+    bobSpeed: 1.4 * (1 + 0.5 * m),
   };
 }
