@@ -1,0 +1,79 @@
+---
+import { chess } from '../../config/site';
+---
+
+<div class="chess" data-chess data-lichess={chess.lichess}>
+  <p class="meta" data-chess-meta>Fetching today's puzzle from Lichess…</p>
+  <div class="board-wrap">
+    <div class="board" role="grid" aria-label="Chess board" data-board></div>
+  </div>
+  <p class="status" data-chess-status aria-live="polite"></p>
+  <div class="actions">
+    <button type="button" data-chess-hint disabled>Hint</button>
+    <button type="button" data-chess-retry disabled>Retry</button>
+    <a data-chess-link href="https://lichess.org/training/daily" target="_blank" rel="noopener">Open on Lichess ↗</a>
+  </div>
+  <p class="rating" data-chess-rating hidden></p>
+</div>
+
+<style>
+  .meta { margin: 0 0 0.75rem; font-size: 0.85rem; color: var(--text-muted); }
+  .board-wrap { width: min(100%, 22rem); margin-inline: auto; }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    aspect-ratio: 1;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .board.shake { animation: shake 0.35s; }
+  @keyframes shake { 25% { translate: -6px 0; } 75% { translate: 6px 0; } }
+
+  .board :global(button) {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    font-size: clamp(1.1rem, 5.5vw, 1.9rem);
+    line-height: 1;
+    cursor: pointer;
+    font-family: 'Segoe UI Symbol', 'Noto Sans Symbols 2', 'DejaVu Sans', system-ui, sans-serif;
+  }
+  .board :global(.light) { background: #b8c2cf; }
+  .board :global(.dark) { background: #7d8999; }
+  .board :global(.last) { box-shadow: inset 0 0 0 100px rgb(251 191 36 / 0.35); }
+  .board :global(.selected) { box-shadow: inset 0 0 0 100px rgb(34 211 238 / 0.45); }
+  .board :global(.hint) { box-shadow: inset 0 0 0 3px #22d3ee, inset 0 0 0 100px rgb(34 211 238 / 0.25); }
+  .board :global(.target)::after {
+    content: '';
+    position: absolute;
+    width: 28%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: rgb(15 23 42 / 0.35);
+  }
+  .board :global(.target.occupied)::after { width: 88%; background: none; border: 3px solid rgb(15 23 42 / 0.35); }
+  .board :global(.w) { color: #fff; text-shadow: 0 0 1px #000, 0 0 1px #000, 0 1px 2px rgb(0 0 0 / 0.6); }
+  .board :global(.b) { color: #0f131a; text-shadow: 0 0 1px rgb(255 255 255 / 0.6); }
+  .board :global(button:focus-visible) { outline: 3px solid #22d3ee; outline-offset: -3px; z-index: 1; }
+
+  .status { min-height: 1.5em; margin: 0.75rem 0 0; font-weight: 600; color: var(--planet); text-align: center; }
+  .actions { display: flex; gap: 0.5rem; justify-content: center; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; }
+  .actions button, .actions a {
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgb(255 255 255 / 0.04);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .actions button:disabled { opacity: 0.4; cursor: default; }
+  .actions button:not(:disabled):hover, .actions a:hover { background: rgb(255 255 255 / 0.1); }
+  .rating { margin: 0.75rem 0 0; font-size: 0.8rem; color: var(--text-muted); text-align: center; }
+</style>

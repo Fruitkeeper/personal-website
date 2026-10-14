@@ -21,7 +21,8 @@ export type Planet =
       links?: Link[];
     })
   | (PlanetBase & { kind: 'markets' })
-  | (PlanetBase & { kind: 'basketball' });
+  | (PlanetBase & { kind: 'basketball' })
+  | (PlanetBase & { kind: 'chess' });
 
 export type PlanetKind = Planet['kind'];
 
@@ -59,6 +60,12 @@ export const planets: Planet[] = [
     color: '#fb923c',
   },
   {
+    kind: 'chess',
+    title: 'Chess',
+    summary: "Beat the toaster's daily puzzle",
+    color: '#cbd5e1',
+  },
+  {
     kind: 'project',
     title: 'Mister Manager',
     summary: 'Fantasy football, priced like a market',
@@ -72,6 +79,12 @@ export const planets: Planet[] = [
 /** Coins the Markets planet tracks (CoinGecko ids). Their average 24h move sets the toaster's mood. */
 export const markets = {
   coins: ['bitcoin', 'ethereum'],
+} as const;
+
+/** Chess planet. Set your Lichess username to show your ratings (empty hides them). */
+export const chess = {
+  // TODO: your Lichess username.
+  lichess: '',
 } as const;
 
 export const credits: Credit[] = [

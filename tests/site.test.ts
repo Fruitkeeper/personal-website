@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { contact, credits, markets, planets, site } from '../src/config/site';
+import { chess, contact, credits, markets, planets, site } from '../src/config/site';
 
 describe('site config', () => {
   it('has a name and description', () => {
@@ -49,6 +49,12 @@ describe('markets config', () => {
   it('tracks at least one coin, by lowercase CoinGecko id', () => {
     expect(markets.coins.length).toBeGreaterThan(0);
     for (const id of markets.coins) expect(id).toMatch(/^[a-z0-9-]+$/);
+  });
+});
+
+describe('chess config', () => {
+  it('has an empty or plausible Lichess username', () => {
+    expect(chess.lichess).toMatch(/^([A-Za-z0-9_-]{2,30})?$/);
   });
 });
 

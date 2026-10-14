@@ -17,13 +17,15 @@ export default defineConfig({
     // Pre-bundle three (and every three/examples module the toaster scene
     // imports) at dev-server start. Otherwise Vite discovers them on the first
     // dynamic import, re-optimizes, and that in-flight import fails in dev.
-    // Keep this list in sync with the imports in src/scripts/toaster-scene.ts.
+    // Keep this list in sync with dynamically imported dependencies.
     optimizeDeps: {
       include: [
         'three',
         'three/examples/jsm/loaders/GLTFLoader.js',
         'three/examples/jsm/environments/RoomEnvironment.js',
         'three/examples/jsm/libs/meshopt_decoder.module.js',
+        // Lazy-loaded by the chess planet; same dev-only re-optimize issue.
+        'chess.js',
       ],
     },
     build: {

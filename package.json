@@ -21,6 +21,7 @@
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.8",
+    "chess.js": "^1.4.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
     "framer-motion": "^14.2.0",
