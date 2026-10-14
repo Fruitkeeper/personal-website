@@ -1,0 +1,123 @@
+---
+import { magic } from '../../config/site';
+---
+
+<div class="magic" data-magic data-favorite={magic.favorite}>
+  <div class="stage" data-stage>
+    <button type="button" class="pack" data-open-pack>
+      <span class="pack-top" aria-hidden="true"></span>
+      <span class="pack-label">Toaster Edition</span>
+      <span class="pack-sub">5-card booster · tap to rip</span>
+    </button>
+    <ol class="fan" data-fan aria-label="Your booster" hidden></ol>
+  </div>
+  <p class="status" data-magic-status aria-live="polite"></p>
+  {magic.favorite && magic.note && <p class="note">★ {magic.favorite}: {magic.note}</p>}
+  <div class="actions">
+    <button type="button" data-open-again hidden>Open another</button>
+  </div>
+  <p class="foot">
+    Cards and images via{' '}
+    <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>. Magic: The Gathering © Wizards of the Coast.
+  </p>
+</div>
+
+<style>
+  .stage { display: grid; place-items: center; min-height: 13rem; }
+
+  .pack {
+    position: relative;
+    display: grid;
+    align-content: center;
+    gap: 0.25rem;
+    width: 8.5rem;
+    aspect-ratio: 63 / 98;
+    border: 0;
+    border-radius: 0.5rem;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+    background:
+      linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.35) 45%, transparent 60%) 0 0 / 250% 100%,
+      linear-gradient(160deg, #7c3aed, #c084fc 45%, #f472b6);
+    box-shadow: 0 18px 40px -12px rgb(192 132 252 / 0.6), inset 0 0 0 1px rgb(255 255 255 / 0.25);
+    animation: sheen 3s linear infinite;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .pack:hover, .pack:focus-visible { transform: translateY(-4px) rotate(-2deg); }
+  .pack:focus-visible { outline: 2px solid var(--planet); outline-offset: 4px; }
+  .pack-top { position: absolute; inset: 0 0 auto; height: 12%; background: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.3) 0 4px, transparent 4px 8px); border-radius: 0.5rem 0.5rem 0 0; }
+  .pack-label { font-family: var(--font-display); font-weight: 700; font-size: 1rem; text-shadow: 0 1px 6px rgb(0 0 0 / 0.4); }
+  .pack-sub { font-size: 0.65rem; opacity: 0.85; }
+  .pack.ripping { animation: rip 0.45s var(--ease-out) forwards; }
+  @keyframes sheen { to { background-position: -250% 0, 0 0; } }
+  @keyframes rip { to { transform: scale(1.15) translateY(-20px); opacity: 0; } }
+
+  .fan { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; width: 100%; }
+  .fan :global(li) {
+    --rot: 0deg;
+    width: 19%;
+    margin-inline: -1.5%;
+    aspect-ratio: 63 / 88;
+    perspective: 800px;
+    transform: rotate(var(--rot)) translateY(var(--lift, 0));
+    transition: transform 0.3s var(--ease-out);
+  }
+  .fan :global(li:nth-child(1)) { --rot: -10deg; --lift: 14px; }
+  .fan :global(li:nth-child(2)) { --rot: -5deg; --lift: 4px; }
+  .fan :global(li:nth-child(4)) { --rot: 5deg; --lift: 4px; }
+  .fan :global(li:nth-child(5)) { --rot: 10deg; --lift: 14px; }
+  .fan :global(li:hover), .fan :global(li:focus-within) { transform: rotate(0) translateY(-18px) scale(1.35); z-index: 2; }
+
+  .fan :global(.card) { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s var(--ease-out); }
+  .fan :global(.card.revealed) { transform: rotateY(180deg); }
+  .fan :global(.face), .fan :global(.back) {
+    position: absolute;
+    inset: 0;
+    border-radius: 5%;
+    backface-visibility: hidden;
+    overflow: hidden;
+    box-shadow: 0 8px 18px -6px rgb(0 0 0 / 0.7);
+  }
+  .fan :global(.back) {
+    background:
+      radial-gradient(ellipse 38% 48% at 50% 50%, #c58b3f, #6b3f1c 70%, transparent 71%),
+      radial-gradient(ellipse 45% 55% at 50% 50%, #2a1a0f 0 100%),
+      #3b2412;
+    border: 3px solid #1a0f08;
+  }
+  .fan :global(.back.failed)::after { content: '?'; position: absolute; inset: 0; display: grid; place-items: center; color: #f5d7a8; font-size: 1.5rem; }
+  .fan :global(.face) { transform: rotateY(180deg); }
+  .fan :global(.face img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .fan :global(.foil)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 20%, rgb(255 120 255 / 0.25) 35%, rgb(120 220 255 / 0.3) 50%, rgb(255 255 160 / 0.25) 65%, transparent 80%) 0 0 / 300% 100%;
+    mix-blend-mode: color-dodge;
+    animation: sheen 2.5s linear infinite;
+    pointer-events: none;
+  }
+
+  .status { min-height: 1.5em; margin: 0.75rem 0 0; text-align: center; font-weight: 600; color: var(--planet); }
+  .note { margin: 0.25rem 0 0; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+  .actions { display: flex; justify-content: center; margin-top: 0.5rem; }
+  .actions button {
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgb(255 255 255 / 0.04);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .actions button:hover { background: rgb(255 255 255 / 0.1); }
+  .foot { margin: 1rem 0 0; font-size: 0.72rem; color: var(--text-muted); text-align: center; }
+  .foot a { color: inherit; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pack, .fan :global(.foil)::after { animation: none; }
+    .fan :global(.card) { transition: none; }
+  }
+</style>

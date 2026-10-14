@@ -5,6 +5,7 @@ import ProjectPanel from './planets/ProjectPanel.astro';
 import MarketsPanel from './planets/MarketsPanel.astro';
 import BasketballPanel from './planets/BasketballPanel.astro';
 import ChessPanel from './planets/ChessPanel.astro';
+import MagicPanel from './planets/MagicPanel.astro';
 
 const items = planets.map((p) => ({ ...p, id: `planet-${slugify(p.title)}` }));
 ---
@@ -40,6 +41,7 @@ const items = planets.map((p) => ({ ...p, id: `planet-${slugify(p.title)}` }));
       {p.kind === 'markets' && <MarketsPanel />}
       {p.kind === 'basketball' && <BasketballPanel />}
       {p.kind === 'chess' && <ChessPanel />}
+      {p.kind === 'magic' && <MagicPanel />}
     </dialog>
   ))
 }
@@ -49,10 +51,12 @@ const items = planets.map((p) => ({ ...p, id: `planet-${slugify(p.title)}` }));
   import { mountMarkets } from '../scripts/markets';
   import { mountToastketball } from '../scripts/toastketball';
   import { mountChess } from '../scripts/chess';
+  import { mountMagic } from '../scripts/magic';
   mountOrbit();
   mountMarkets();
   mountToastketball();
   mountChess();
+  mountMagic();
 </script>
 
 <style>

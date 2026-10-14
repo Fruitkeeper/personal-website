@@ -22,7 +22,8 @@ export type Planet =
     })
   | (PlanetBase & { kind: 'markets' })
   | (PlanetBase & { kind: 'basketball' })
-  | (PlanetBase & { kind: 'chess' });
+  | (PlanetBase & { kind: 'chess' })
+  | (PlanetBase & { kind: 'magic' });
 
 export type PlanetKind = Planet['kind'];
 
@@ -66,6 +67,12 @@ export const planets: Planet[] = [
     color: '#cbd5e1',
   },
   {
+    kind: 'magic',
+    title: 'Magic',
+    summary: 'Rip open a booster',
+    color: '#c084fc',
+  },
+  {
     kind: 'project',
     title: 'Mister Manager',
     summary: 'Fantasy football, priced like a market',
@@ -85,6 +92,16 @@ export const markets = {
 export const chess = {
   // TODO: your Lichess username.
   lichess: '',
+} as const;
+
+/**
+ * Magic planet. Set `favorite` to a card's exact English name to guarantee it
+ * in every pack (replacing a common), with your note shown under the pack.
+ */
+export const magic = {
+  // TODO: your favorite card, e.g. 'Lightning Bolt', and why you love it.
+  favorite: '',
+  note: '',
 } as const;
 
 export const credits: Credit[] = [
