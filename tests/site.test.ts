@@ -30,12 +30,25 @@ describe('widgets', () => {
   it('keeps summaries short', () => {
     for (const p of widgets) expect(p.summary.length).toBeLessThanOrEqual(40);
   });
-  it('puts widgets on both sides, at most 3 per side so they fit a laptop screen', () => {
-    const left = widgets.filter((w) => w.side === 'left').length;
-    const right = widgets.filter((w) => w.side === 'right').length;
-    expect(left).toBeGreaterThan(0);
-    expect(right).toBeGreaterThan(0);
-    expect(Math.max(left, right)).toBeLessThanOrEqual(3);
+  it('puts objects on both sides, at most 3 per side so they fit a laptop screen (projects share one deck)', () => {
+    const count = (side: 'left' | 'right') => {
+      const own = widgets.filter((w) => w.side === side && w.kind !== 'project').length;
+      const deck = widgets.some((w) => w.side === side && w.kind === 'project') ? 1 : 0;
+      return own + deck;
+    };
+    expect(count('left')).toBeGreaterThan(0);
+    expect(count('right')).toBeGreaterThan(0);
+    expect(Math.max(count('left'), count('right'))).toBeLessThanOrEqual(3);
+  });
+  it('keeps all projects on one side (they form a single deck)', () => {
+    expect(new Set(widgets.filter((w) => w.kind === 'project').map((w) => w.side)).size).toBeLessThanOrEqual(1);
+  });
+  it('fills in project role, period and highlights', () => {
+    for (const w of widgets) {
+      if (w.kind !== 'project') continue;
+      expect(w.role && w.period).toBeTruthy();
+      expect(w.highlights.length).toBeGreaterThan(0);
+    }
   });
   it('gives every widget a hex color', () => {
     for (const p of widgets) expect(p.color).toMatch(/^#[0-9a-f]{6}$/i);
@@ -83,5 +96,22 @@ describe('credits', () => {
       expect(c.href).toMatch(/^https:\/\//);
       expect(c.licenseHref).toMatch(/^https:\/\//);
     }
+  });
+});
+
+import { about } from '../src/config/site';
+
+describe('about', () => {
+  it('has an intro', () => expect(about.intro.length).toBeGreaterThan(0));
+  it('fills every role', () => {
+    for (const r of about.experience) {
+      expect(r.org && r.role && r.period && r.place).toBeTruthy();
+      expect(r.points.length).toBeGreaterThan(0);
+      expect(r.color).toMatch(/^#[0-9a-f]{6}$/i);
+      if (r.href) expect(r.href).toMatch(/^https:\/\//);
+    }
+  });
+  it('never publishes a phone number', () => {
+    expect(JSON.stringify(about)).not.toMatch(/\+?\d[\d\s]{8,}\d/);
   });
 });

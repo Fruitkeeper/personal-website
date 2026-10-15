@@ -8,7 +8,11 @@ interface Props {
 const { widget } = Astro.props;
 ---
 
+<p class="meta">{widget.role} · {widget.period}</p>
 <p>{widget.description}</p>
+<ul class="highlights">
+  {widget.highlights.map((h) => <li>{h}</li>)}
+</ul>
 <ul class="tags" aria-label="Technologies">
   {widget.tags.map((t) => <li>{t}</li>)}
 </ul>
@@ -26,6 +30,10 @@ const { widget } = Astro.props;
 
 <style>
   p { color: var(--text-muted); }
+  .meta { margin: -0.5rem 0 0.75rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--widget); }
+  .highlights { margin: 0.75rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; }
+  .highlights li { position: relative; padding-left: 1.1rem; font-size: 0.92rem; line-height: 1.45; }
+  .highlights li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--widget); box-shadow: 0 0 8px var(--widget); }
   .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem 0 0; }
   .tags li {
     font-family: var(--font-mono);

@@ -21,13 +21,14 @@ A single page: your name, a 3D sad toaster robot (Three.js) whose head follows y
 Everything personal is in `src/config/site.ts`:
 
 - `contact` — GitHub, LinkedIn, X, email. **LinkedIn and X are placeholders (`your-handle`).**
-- `site` — your name and one-line tagline (top-left).
+- `site` — your name, tagline (top-left) and location.
+- `about` — the About page (`/about`): intro, experience timeline, side projects, education, tools & languages. Drafted from your CV; the phone number is deliberately left off (a test enforces it).
 - `widgets` — the cards around the toaster, alternating left/right in order. Each has a `kind`:
   - `markets` — live BTC/ETH (CoinGecko); the toaster's mood follows the average 24h move. Coins: `markets.coins`.
   - `basketball` — Toast-ketball: flick toast into the toaster's slot.
   - `chess` — the Lichess daily puzzle. **Set `chess.lichess`** to show your ratings.
   - `magic` — open a 5-card booster (Scryfall). **Set `magic.favorite` / `magic.note`** to guarantee your favorite card.
-  - `project` — a classic project card (title, description, tags, public links).
+  - `project` — a project (title, role, period, description, highlights, tags, public links). All projects render together as one fanned deck of sticker cards.
 - `credits` — attribution for third-party assets. Currently only in a `<meta name="attribution">` tag; the toaster's CC BY-NC license expects a visible credit.
 
 ## Pieces
