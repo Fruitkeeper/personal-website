@@ -8,11 +8,13 @@ type WidgetBase = {
   summary: string;
   /** Accent color (hex). The markets widget recolors itself by mood. */
   color: string;
+  /** Which side of the toaster it sits on (desktop). */
+  side: 'left' | 'right';
 };
 
 /**
  * Each widget is a different kind of experience; `kind` picks what it shows
- * and the panel it opens. Widgets alternate left/right of the toaster in order.
+ * and the panel it opens.
  */
 export type Widget =
   | (WidgetBase & {
@@ -58,24 +60,28 @@ export const widgets: Widget[] = [
     title: 'Markets',
     summary: "The toaster's mood follows crypto",
     color: '#94a3b8',
+    side: 'left',
   },
   {
     kind: 'basketball',
     title: 'Toast-ketball',
     summary: 'Flick toast into the slot',
     color: '#fb923c',
+    side: 'right',
   },
   {
     kind: 'chess',
     title: 'Chess',
     summary: "Beat the toaster's daily puzzle",
     color: '#cbd5e1',
+    side: 'left',
   },
   {
     kind: 'magic',
     title: 'Magic',
     summary: 'Rip open a booster',
     color: '#c084fc',
+    side: 'right',
   },
   {
     kind: 'project',
@@ -85,6 +91,7 @@ export const widgets: Widget[] = [
       'A fantasy football game where player prices move like a market, at LaLiga scale, with leagues. Django + django-ninja API on PostgreSQL, and an Expo / React Native mobile app.',
     tags: ['Django', 'React Native', 'PostgreSQL'],
     color: '#f472b6',
+    side: 'right',
   },
 ];
 

@@ -1,21 +1,98 @@
-<div class="row">
-  <span class="stack" aria-hidden="true"><i></i><i></i><i></i></span>
-  <p class="last">Last rare: <strong data-last-pull>none yet</strong></p>
+<div class="mtg">
+  <div class="frame">
+    <p class="titlebar">
+      <span class="name" data-last-pull>Toaster Booster</span>
+      <span class="mana" aria-hidden="true"><i></i><i></i></span>
+    </p>
+    <div class="art">
+      <img data-last-pull-art alt="" hidden />
+      <span class="placeholder" aria-hidden="true">◈</span>
+    </div>
+    <p class="typeline"><span data-last-pull-type>Booster — Toaster Edition</span><span class="set" aria-hidden="true">◆</span></p>
+    <div class="textbox">
+      <p>Rip open a pack of five real cards.</p>
+      <p class="flavor" data-last-pull-flavor>"No rares yet. The toaster is waiting."</p>
+    </div>
+  </div>
 </div>
 
 <style>
-  .row { display: flex; align-items: center; gap: 0.8rem; }
-  .stack { position: relative; width: 1.9rem; height: 2.6rem; flex: none; }
-  .stack i {
+  .mtg {
+    position: relative;
+    width: 12rem;
+    aspect-ratio: 63 / 88;
+    padding: 0.45rem;
+    border-radius: 0.6rem;
+    background: #0d0b0f;
+    box-shadow: 0 18px 36px -16px rgb(0 0 0 / 0.95), 0 0 0 1px rgb(255 255 255 / 0.06);
+    text-align: left;
+    overflow: hidden;
+  }
+  /* Foil sheen sweeping across the whole card. */
+  .mtg::after {
+    content: '';
     position: absolute;
     inset: 0;
-    border-radius: 0.2rem;
-    background: radial-gradient(ellipse 38% 46% at 50% 50%, #c58b3f, #6b3f1c 70%, #2a1a0f 72%);
-    border: 1.5px solid #1a0f08;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+    background: linear-gradient(115deg, transparent 25%, rgb(255 120 255 / 0.18) 38%, rgb(120 220 255 / 0.22) 50%, rgb(255 255 160 / 0.18) 62%, transparent 75%) 0 0 / 300% 100%;
+    mix-blend-mode: color-dodge;
+    animation: foil 5s linear infinite;
+    pointer-events: none;
   }
-  .stack i:nth-child(1) { transform: rotate(-10deg) translateX(-3px); }
-  .stack i:nth-child(3) { transform: rotate(9deg) translateX(3px); }
-  .last { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
-  .last strong { color: var(--text); font-weight: 600; }
+  @keyframes foil { to { background-position: -300% 0; } }
+  .frame {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    /* minmax(0, …): a long card name must truncate, not widen the frame. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+    height: 100%;
+    padding: 0.3rem;
+    border-radius: 0.35rem;
+    background: linear-gradient(160deg, #5b4a7a, #3c2f57 50%, #2b2141);
+  }
+  .titlebar, .typeline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.6rem / 0.5rem;
+    background: linear-gradient(180deg, #e9e2f2, #c7bcd8);
+    box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgb(0 0 0 / 0.5);
+    color: #17111f;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+  .name { min-width: 0; font-size: 0.68rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mana { flex: none; }
+  .mana { display: flex; gap: 2px; }
+  .mana i { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff6, #8a5cf6); box-shadow: 0 0 0 1px #3b2a5c; }
+  .art {
+    position: relative;
+    border-radius: 0.15rem;
+    overflow: hidden;
+    border: 2px solid #1d1528;
+    background:
+      radial-gradient(60% 50% at 50% 40%, rgb(192 132 252 / 0.6), transparent 70%),
+      radial-gradient(40% 40% at 30% 70%, rgb(34 211 238 / 0.4), transparent 70%),
+      #120d1c;
+    min-height: 0;
+  }
+  .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .placeholder { position: absolute; inset: 0; display: grid; place-items: center; font-size: 2rem; color: rgb(255 255 255 / 0.65); }
+  .art img:not([hidden]) + .placeholder { display: none; }
+  .typeline span:first-child { min-width: 0; font-size: 0.56rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .set { font-size: 0.6rem; color: #b8862c; }
+  .textbox {
+    padding: 0.3rem 0.4rem;
+    border-radius: 0.15rem;
+    background: linear-gradient(180deg, #f4efe6, #e2d9c8);
+    color: #1d1710;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.55rem;
+    line-height: 1.3;
+  }
+  .textbox p { margin: 0; }
+  .flavor { margin-top: 0.2rem !important; font-style: italic; color: #4a3f30; }
+  @media (prefers-reduced-motion: reduce) { .mtg::after { animation: none; } }
 </style>

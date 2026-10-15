@@ -30,6 +30,13 @@ describe('widgets', () => {
   it('keeps summaries short', () => {
     for (const p of widgets) expect(p.summary.length).toBeLessThanOrEqual(40);
   });
+  it('puts widgets on both sides, at most 3 per side so they fit a laptop screen', () => {
+    const left = widgets.filter((w) => w.side === 'left').length;
+    const right = widgets.filter((w) => w.side === 'right').length;
+    expect(left).toBeGreaterThan(0);
+    expect(right).toBeGreaterThan(0);
+    expect(Math.max(left, right)).toBeLessThanOrEqual(3);
+  });
   it('gives every widget a hex color', () => {
     for (const p of widgets) expect(p.color).toMatch(/^#[0-9a-f]{6}$/i);
   });

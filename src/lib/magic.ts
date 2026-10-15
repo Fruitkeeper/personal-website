@@ -5,6 +5,8 @@ export type Card = {
   name: string;
   /** Front-face image (Scryfall "normal" size). */
   image: string;
+  /** Just the illustration (Scryfall "art_crop"), for the widget's art box. Empty if missing. */
+  art: string;
   /** Scryfall page for the card. */
   href: string;
   rarity: 'common' | 'uncommon' | 'rare' | 'mythic' | 'special';
@@ -24,13 +26,16 @@ export function parseCard(json: unknown): Card | null {
   if (!json || typeof json !== 'object') return null;
   const c = json as Record<string, any>;
   if (c.object !== 'card' || typeof c.name !== 'string') return null;
-  const image: unknown = c.image_uris?.normal ?? c.card_faces?.[0]?.image_uris?.normal;
+  const uris = c.image_uris ?? c.card_faces?.[0]?.image_uris;
+  const image: unknown = uris?.normal;
+  const art: unknown = uris?.art_crop;
   const href: unknown = c.scryfall_uri;
   if (typeof image !== 'string' || !HTTPS.test(image) || typeof href !== 'string' || !HTTPS.test(href)) return null;
   const rarity = RARITIES.has(c.rarity) ? c.rarity : 'common';
   return {
     name: c.name,
     image,
+    art: typeof art === 'string' && HTTPS.test(art) ? art : '',
     href,
     rarity,
     set: typeof c.set_name === 'string' ? c.set_name : '',

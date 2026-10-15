@@ -7,7 +7,7 @@ const card = (over: Record<string, unknown> = {}) => ({
   rarity: 'common',
   set_name: 'Innistrad: Crimson Vow',
   scryfall_uri: 'https://scryfall.com/card/vow/155/end-the-festivities',
-  image_uris: { normal: 'https://cards.scryfall.io/normal/front/b/e/x.jpg' },
+  image_uris: { normal: 'https://cards.scryfall.io/normal/front/b/e/x.jpg', art_crop: 'https://cards.scryfall.io/art_crop/front/b/e/x.jpg' },
   ...over,
 });
 
@@ -16,6 +16,7 @@ describe('parseCard', () => {
     expect(parseCard(card())).toEqual({
       name: 'End the Festivities',
       image: 'https://cards.scryfall.io/normal/front/b/e/x.jpg',
+      art: 'https://cards.scryfall.io/art_crop/front/b/e/x.jpg',
       href: 'https://scryfall.com/card/vow/155/end-the-festivities',
       rarity: 'common',
       set: 'Innistrad: Crimson Vow',
@@ -25,6 +26,14 @@ describe('parseCard', () => {
   it('uses the front face of double-faced cards', () => {
     const dfc = card({ image_uris: undefined, card_faces: [{ image_uris: { normal: 'https://cards.scryfall.io/front.jpg' } }, { image_uris: { normal: 'https://cards.scryfall.io/back.jpg' } }] });
     expect(parseCard(dfc)?.image).toBe('https://cards.scryfall.io/front.jpg');
+  });
+  it('takes the art crop from the front face of double-faced cards', () => {
+    const dfc = card({ image_uris: undefined, card_faces: [{ image_uris: { normal: 'https://cards.scryfall.io/f.jpg', art_crop: 'https://cards.scryfall.io/f-art.jpg' } }] });
+    expect(parseCard(dfc)?.art).toBe('https://cards.scryfall.io/f-art.jpg');
+  });
+  it('leaves art empty when missing or unsafe, without rejecting the card', () => {
+    expect(parseCard(card({ image_uris: { normal: 'https://cards.scryfall.io/x.jpg' } }))?.art).toBe('');
+    expect(parseCard(card({ image_uris: { normal: 'https://cards.scryfall.io/x.jpg', art_crop: 'javascript:x' } }))?.art).toBe('');
   });
   it('marks rares and mythics as foil', () => {
     expect(parseCard(card({ rarity: 'rare' }))?.foil).toBe(true);

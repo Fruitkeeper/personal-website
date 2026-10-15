@@ -1,6 +1,6 @@
 ---
 import { widgets } from '../config/site';
-import { splitColumns } from '../lib/columns';
+import { groupBySide } from '../lib/columns';
 import { slugify } from '../lib/slug';
 import MarketsWidget from './widgets/MarketsWidget.astro';
 import ChessWidget from './widgets/ChessWidget.astro';
@@ -14,8 +14,9 @@ import ChessPanel from './panels/ChessPanel.astro';
 import MagicPanel from './panels/MagicPanel.astro';
 
 const items = widgets.map((w) => ({ ...w, id: `widget-${slugify(w.title)}` }));
-const { left, right } = splitColumns(items);
-const CTA: Record<string, string> = { markets: 'Open', basketball: 'Play', chess: 'Solve', magic: 'Open a pack', project: 'Details' };
+const { left, right } = groupBySide(items);
+/** Resting angle per widget (deg), so they read as scattered objects, not a grid. */
+const ROT = [-2.2, 1.6, -1, 2.4, -1.8];
 ---
 
 <section class="widgets" aria-label="Things to explore">
@@ -28,23 +29,17 @@ const CTA: Record<string, string> = { markets: 'Open', basketball: 'Play', chess
             class="widget"
             data-widget-kind={w.kind}
             data-open-dialog={w.id}
+            data-tilt
             aria-haspopup="dialog"
             aria-controls={w.id}
-            style={`--widget: ${w.color}; --delay: ${(c + i * 2) * 70 + 300}ms`}
+            style={`--widget: ${w.color}; --rot: ${ROT[(c * 3 + i) % ROT.length]}deg; --delay: ${(c + i * 2) * 70 + 300}ms; --phase: ${-(c * 2.3 + i * 1.7)}s`}
           >
-            <span class="head">
-              <span class="dot" aria-hidden="true" />
-              <span class="title">{w.title}</span>
-              <span class="cta" aria-hidden="true">{CTA[w.kind]} →</span>
-            </span>
-            <span class="summary">{w.summary}</span>
-            <span class="body">
-              {w.kind === 'markets' && <MarketsWidget />}
-              {w.kind === 'chess' && <ChessWidget />}
-              {w.kind === 'basketball' && <BasketballWidget />}
-              {w.kind === 'magic' && <MagicWidget />}
-              {w.kind === 'project' && <ProjectWidget widget={w} />}
-            </span>
+            <span class="sr-only">{w.title}: {w.summary}.</span>
+            {w.kind === 'markets' && <MarketsWidget />}
+            {w.kind === 'chess' && <ChessWidget />}
+            {w.kind === 'basketball' && <BasketballWidget />}
+            {w.kind === 'magic' && <MagicWidget />}
+            {w.kind === 'project' && <ProjectWidget widget={w} />}
           </button>
         ))}
       </div>
@@ -73,11 +68,13 @@ const CTA: Record<string, string> = { markets: 'Open', basketball: 'Play', chess
 
 <script>
   import { mountDialogs } from '../scripts/dialogs';
+  import { mountTilt } from '../scripts/tilt';
   import { mountMarkets } from '../scripts/markets';
   import { mountToastketball } from '../scripts/toastketball';
   import { mountChess } from '../scripts/chess';
   import { mountMagic } from '../scripts/magic';
   mountDialogs();
+  mountTilt();
   mountMarkets();
   mountToastketball();
   mountChess();
@@ -99,59 +96,63 @@ const CTA: Record<string, string> = { markets: 'Open', basketball: 'Play', chess
     padding: 7rem clamp(1.25rem, 3.5vw, 2.5rem) 2rem;
     pointer-events: none;
   }
-  .col { display: grid; gap: 1rem; pointer-events: auto; }
-  .left { grid-column: 1; }
+  .col { display: grid; gap: 1.4rem; pointer-events: auto; }
+  .left { grid-column: 1; justify-items: start; }
   /* Leave room for the contact dock in the bottom-right corner. */
-  .right { grid-column: 3; margin-right: 4rem; align-self: start; margin-top: 4vh; }
+  .right { grid-column: 3; justify-items: end; margin-right: 4.5rem; align-self: center; }
+  /* Shorter screens: shrink the objects a little so the columns still fit. */
+  @media (min-width: 900px) and (max-height: 820px) {
+    .col { zoom: 0.86; }
+  }
+  @media (min-width: 900px) and (max-height: 700px) {
+    .col { zoom: 0.74; }
+  }
 
+  /*
+   * Every widget is a physical object: a resting angle, a slow float (out of
+   * sync with its neighbours), a 3D tilt toward the cursor (scripts/tilt.ts
+   * sets --rx/--ry) and a glare that follows it (--gx/--gy).
+   */
   .widget {
-    display: grid;
-    gap: 0.45rem;
-    width: 100%;
-    padding: 0.95rem 1.05rem 1rem;
-    text-align: left;
-    color: var(--text);
+    position: relative;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
     font: inherit;
-    background: rgb(18 18 30 / 0.58);
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-    box-shadow: 0 12px 30px -16px rgb(0 0 0 / 0.7);
+    text-align: left;
     cursor: pointer;
-    transition: transform 0.35s var(--ease-out), border-color 0.3s, box-shadow 0.3s;
-    animation: pop-in 0.7s var(--delay, 0ms) var(--ease-out) both;
+    border-radius: 0.7rem;
+    transform: perspective(900px) rotate(var(--rot, 0deg)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    transition: transform 0.5s var(--ease-out), filter 0.3s;
+    animation:
+      pop-in 0.8s var(--delay, 0ms) var(--ease-out) both,
+      float 7s var(--phase, 0s) ease-in-out infinite;
   }
-  @keyframes pop-in { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
+  @keyframes pop-in { from { opacity: 0; scale: 0.92; } }
+  @keyframes float { 50% { translate: 0 -7px; } }
   .widget:hover, .widget:focus-visible {
-    transform: translateY(-3px);
-    border-color: color-mix(in srgb, var(--widget) 55%, transparent);
-    box-shadow: 0 16px 40px -14px color-mix(in srgb, var(--widget) 45%, transparent);
+    --rot: 0deg;
+    transition: transform 0.15s linear, filter 0.3s;
+    filter: drop-shadow(0 20px 30px color-mix(in srgb, var(--widget) 35%, transparent));
+    z-index: 1;
   }
-  .widget:focus-visible { outline: 2px solid var(--widget); outline-offset: 3px; }
-
-  .head { display: flex; align-items: center; gap: 0.5rem; }
-  .dot {
-    width: 0.55rem;
-    height: 0.55rem;
-    border-radius: 50%;
-    background: var(--widget);
-    box-shadow: 0 0 10px var(--widget);
-    flex: none;
-    transition: background 1s, box-shadow 1s;
-  }
-  .title { font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; }
-  .cta {
-    margin-left: auto;
-    font-size: 0.7rem;
-    color: var(--text-muted);
+  .widget:focus-visible { outline: 2px solid var(--widget); outline-offset: 6px; }
+  /* Glare: a soft highlight that follows the cursor across the object. */
+  .widget::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / 0.22), transparent 55%);
+    mix-blend-mode: soft-light;
     opacity: 0;
-    transform: translateX(-4px);
-    transition: opacity 0.25s, transform 0.3s var(--ease-out);
+    transition: opacity 0.3s;
+    pointer-events: none;
   }
-  .widget:hover .cta, .widget:focus-visible .cta { opacity: 1; transform: none; color: var(--widget); }
-  .summary { font-size: 0.8rem; color: var(--text-muted); }
-  .body { display: block; padding-top: 0.45rem; border-top: 1px solid rgb(255 255 255 / 0.06); }
+  .widget:hover::after { opacity: 1; }
 
   @media (max-width: 899.98px) {
     .widgets {
@@ -164,10 +165,11 @@ const CTA: Record<string, string> = { markets: 'Open', basketball: 'Play', chess
     }
     .col { display: contents; }
     .right { margin: 0; }
+    .widget { justify-self: center; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .widget { animation: none; }
+    .widget { animation: none; transform: rotate(var(--rot, 0deg)); }
   }
 
   /* Panels (dialogs) */
@@ -189,7 +191,15 @@ const CTA: Record<string, string> = { markets: 'Open', basketball: 'Play', chess
   .panel::backdrop { background: rgb(4 4 8 / 0.55); backdrop-filter: blur(3px); }
   @keyframes panel-in { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
   .panel h2 { display: flex; align-items: center; gap: 0.6rem; font-size: 1.6rem; margin: 0 0 1rem; }
-  .panel h2 .dot { width: 0.7rem; height: 0.7rem; }
+  .panel h2 .dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--widget);
+    box-shadow: 0 0 10px var(--widget);
+    flex: none;
+    transition: background 1s, box-shadow 1s;
+  }
   .close {
     position: absolute;
     top: 0.75rem;

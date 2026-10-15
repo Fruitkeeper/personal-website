@@ -6,17 +6,44 @@ import { HOP_EVENT } from '../lib/toaster';
 const API = 'https://api.scryfall.com';
 const LAST_PULL_KEY = 'magic:last-pull';
 
-/** Remember the latest rare pull for the small widget (storage may be unavailable). */
-function showLastPull(name?: string) {
+type LastPull = { name: string; art: string; set: string; rarity: string };
+
+/** The latest rare pull, for the widget's card (storage may be unavailable or hold an old format). */
+function readLastPull(): LastPull | null {
   try {
-    if (name) localStorage.setItem(LAST_PULL_KEY, name);
-    name ??= localStorage.getItem(LAST_PULL_KEY) ?? undefined;
+    const raw = localStorage.getItem(LAST_PULL_KEY);
+    if (!raw) return null;
+    const v = raw.startsWith('{') ? JSON.parse(raw) : { name: raw }; // old format: just the name
+    return typeof v?.name === 'string' ? { name: v.name, art: typeof v.art === 'string' ? v.art : '', set: v.set ?? '', rarity: v.rarity ?? 'rare' } : null;
   } catch {
-    /* ignore */
+    return null;
   }
-  if (!name) return;
-  for (const el of document.querySelectorAll('[data-last-pull]')) el.textContent = name;
 }
+
+/** Show (and optionally store) the latest rare pull on the widget's card. */
+function showLastPull(card?: Card) {
+  if (card) {
+    try {
+      localStorage.setItem(LAST_PULL_KEY, JSON.stringify({ name: card.name, art: card.art, set: card.set, rarity: card.rarity }));
+    } catch {
+      /* ignore */
+    }
+  }
+  const pull = card ? { name: card.name, art: card.art, set: card.set, rarity: card.rarity } : readLastPull();
+  if (!pull) return;
+  for (const el of document.querySelectorAll('[data-last-pull]')) el.textContent = pull.name;
+  for (const el of document.querySelectorAll('[data-last-pull-type]')) el.textContent = `${pull.rarity === 'mythic' ? 'Mythic' : 'Rare'} pull${pull.set ? ` — ${pull.set}` : ''}`;
+  for (const el of document.querySelectorAll('[data-last-pull-flavor]')) el.textContent = '"Pulled from a Toaster Edition booster."';
+  // Only https URLs from the parsed card ever get here (see parseCard).
+  if (pull.art && /^https:\/\//.test(pull.art)) {
+    for (const img of document.querySelectorAll<HTMLImageElement>('[data-last-pull-art]')) {
+      img.src = pull.art;
+      img.alt = pull.name;
+      img.hidden = false;
+    }
+  }
+}
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function scryfall(path: string): Promise<Card> {
@@ -106,7 +133,7 @@ export function mountMagic() {
     if (!got) status.textContent = "Scryfall didn't answer — the pack was empty. Try again in a moment.";
     else if (best) {
       status.textContent = `${best.rarity === 'mythic' ? 'MYTHIC' : 'Rare'} pull: ${best.name}!`;
-      showLastPull(best.name);
+      showLastPull(best);
       window.dispatchEvent(new CustomEvent(HOP_EVENT));
     } else status.textContent = 'Nice pack.';
     again.hidden = false;

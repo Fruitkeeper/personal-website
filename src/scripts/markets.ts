@@ -11,6 +11,7 @@ import {
   sparklinePath,
   type Coin,
 } from '../lib/markets';
+import { blockSpark } from '../lib/widget-art';
 import { MOOD_EVENT } from '../lib/toaster';
 
 const API = 'https://api.coingecko.com/api/v3/coins/markets';
@@ -103,9 +104,15 @@ function updateWidget(coins: Coin[], mood: string) {
     if (!row) continue;
     row.querySelector<HTMLElement>('[data-mw-sym]')!.textContent = coin.symbol;
     row.querySelector<HTMLElement>('[data-mw-price]')!.textContent = formatPrice(coin.price);
+    const dir = coin.change24h >= 0 ? 'up' : 'down';
     const change = row.querySelector<HTMLElement>('[data-mw-change]')!;
-    change.textContent = formatChange(coin.change24h);
-    change.className = `chg ${coin.change24h >= 0 ? 'up' : 'down'}`;
+    change.textContent = `${dir === 'up' ? '▲' : '▼'}${formatChange(coin.change24h).replace(/^[+−]/, '')}`;
+    change.className = `chg ${dir}`;
+    const spark = row.querySelector<HTMLElement>('[data-mw-spark]');
+    if (spark) {
+      spark.textContent = blockSpark(coin.sparkline, 14) || spark.textContent;
+      spark.className = `spark ${dir}`;
+    }
   }
 }
 
