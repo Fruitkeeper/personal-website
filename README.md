@@ -27,15 +27,14 @@ Everything personal is in `src/config/site.ts`:
   - `markets` — live BTC/ETH (CoinGecko); the toaster's mood follows the average 24h move. Coins: `markets.coins`.
   - `basketball` — Toast-ketball: flick toast into the toaster's slot.
   - `chess` — the Lichess daily puzzle. **Set `chess.lichess`** to show your ratings.
-  - `magic` — open a 5-card booster (Scryfall). **Set `magic.favorite` / `magic.note`** to guarantee your favorite card.
   - `project` — a project (title, role, period, description, highlights, tags, public links). All projects render together as one fanned deck of sticker cards.
 - `credits` — attribution for third-party assets. Currently only in a `<meta name="attribution">` tag; the toaster's CC BY-NC license expects a visible credit.
 
 ## Pieces
 
-- **Widgets** (`src/components/Widgets.astro`, designs in `src/components/widgets/`): each is a distinct object, not a card template — a CRT trading terminal (live prices, block-character sparklines, mood with a blinking cursor), a walnut mini board showing today's actual puzzle position with a brass plate and a SOLVED ink stamp, an LED seven-segment scoreboard for your best Toast-ketball streak, a Magic card framed around your last rare pull's art, and a sticker-style player card for the project. They float, tilt in 3D toward the cursor with a glare (`src/scripts/tilt.ts`), and open their panels on click (`src/components/panels/*Panel.astro`). Pure helpers + tests in `src/lib/widget-art.ts`. Each widget's `side` (config) places it left/right of the toaster; below 900px everything stacks.
-- **Toaster reactions**: planets talk to the 3D scene via window events — `toaster:mood` (markets) and `toaster:hop` (a make, a solved puzzle, a rare pull).
-- **External data**: CoinGecko, Lichess and Scryfall public APIs, called from the browser (no keys). Each panel degrades gracefully when its API is unreachable.
+- **Widgets** (`src/components/Widgets.astro`, designs in `src/components/widgets/`): each is a distinct object, not a card template — a CRT trading terminal (live prices, block-character sparklines, mood with a blinking cursor), a walnut mini board showing today's actual puzzle position with a brass plate and a SOLVED ink stamp, an LED seven-segment scoreboard for your best Toast-ketball streak and a sticker-style player card for the project. They float, tilt in 3D toward the cursor with a glare (`src/scripts/tilt.ts`), and open their panels on click (`src/components/panels/*Panel.astro`). Pure helpers + tests in `src/lib/widget-art.ts`. Each widget's `side` (config) places it left/right of the toaster; below 900px everything stacks.
+- **Toaster reactions**: planets talk to the 3D scene via window events — `toaster:mood` (markets) and `toaster:hop` (a make, a solved puzzle).
+- **External data**: CoinGecko and Lichess public APIs, called from the browser (no keys). Each panel degrades gracefully when its API is unreachable.
 - **Contact dock** (`src/components/Contact.astro`, `src/scripts/contact.ts`, math in `src/lib/magnet.ts`): GitHub, LinkedIn, X, email — magnetic buttons with a spinning gradient ring and slide-out labels. Clicking email copies the address (falls back to `mailto:`).
 
 ## The toaster

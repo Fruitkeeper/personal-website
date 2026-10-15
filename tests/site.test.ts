@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chess, contact, credits, magic, markets, widgets, site } from '../src/config/site';
+import { chess, contact, credits, markets, widgets, site } from '../src/config/site';
 
 describe('site config', () => {
   it('has a name, tagline and description', () => {
@@ -77,12 +77,6 @@ describe('markets config', () => {
 describe('chess config', () => {
   it('has an empty or plausible Lichess username', () => {
     expect(chess.lichess).toMatch(/^([A-Za-z0-9_-]{2,30})?$/);
-  });
-});
-
-describe('magic config', () => {
-  it('only has a note when a favorite card is set', () => {
-    if (!magic.favorite) expect(magic.note).toBe('');
   });
 });
 

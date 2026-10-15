@@ -5,13 +5,11 @@ import { slugify } from '../lib/slug';
 import MarketsWidget from './widgets/MarketsWidget.astro';
 import ChessWidget from './widgets/ChessWidget.astro';
 import BasketballWidget from './widgets/BasketballWidget.astro';
-import MagicWidget from './widgets/MagicWidget.astro';
 import ProjectWidget from './widgets/ProjectWidget.astro';
 import ProjectPanel from './panels/ProjectPanel.astro';
 import MarketsPanel from './panels/MarketsPanel.astro';
 import BasketballPanel from './panels/BasketballPanel.astro';
 import ChessPanel from './panels/ChessPanel.astro';
-import MagicPanel from './panels/MagicPanel.astro';
 
 const items = widgets.map((w) => ({ ...w, id: `widget-${slugify(w.title)}` }));
 // Projects share one object: a fanned deck of sticker cards, placed with the others on their side.
@@ -44,7 +42,6 @@ const ROT = [-2.2, 1.6, -1, 2.4, -1.8];
             {w.kind === 'markets' && <MarketsWidget />}
             {w.kind === 'chess' && <ChessWidget />}
             {w.kind === 'basketball' && <BasketballWidget />}
-            {w.kind === 'magic' && <MagicWidget />}
           </button>
         ))}
         {projects.length > 0 && deckSide === (c === 0 ? 'left' : 'right') && (
@@ -86,7 +83,6 @@ const ROT = [-2.2, 1.6, -1, 2.4, -1.8];
       {w.kind === 'markets' && <MarketsPanel />}
       {w.kind === 'basketball' && <BasketballPanel />}
       {w.kind === 'chess' && <ChessPanel />}
-      {w.kind === 'magic' && <MagicPanel />}
     </dialog>
   ))
 }
@@ -97,13 +93,11 @@ const ROT = [-2.2, 1.6, -1, 2.4, -1.8];
   import { mountMarkets } from '../scripts/markets';
   import { mountToastketball } from '../scripts/toastketball';
   import { mountChess } from '../scripts/chess';
-  import { mountMagic } from '../scripts/magic';
   mountDialogs();
   mountTilt();
   mountMarkets();
   mountToastketball();
   mountChess();
-  mountMagic();
 </script>
 
 <style>

@@ -33,8 +33,7 @@ export type Widget =
     })
   | (WidgetBase & { kind: 'markets' })
   | (WidgetBase & { kind: 'basketball' })
-  | (WidgetBase & { kind: 'chess' })
-  | (WidgetBase & { kind: 'magic' });
+  | (WidgetBase & { kind: 'chess' });
 
 export type WidgetKind = Widget['kind'];
 
@@ -75,7 +74,7 @@ export const widgets: Widget[] = [
     title: 'Toast-ketball',
     summary: 'Flick toast into the slot',
     color: '#fb923c',
-    side: 'left',
+    side: 'right',
   },
   {
     kind: 'chess',
@@ -83,13 +82,6 @@ export const widgets: Widget[] = [
     summary: "Beat the toaster's daily puzzle",
     color: '#cbd5e1',
     side: 'left',
-  },
-  {
-    kind: 'magic',
-    title: 'Magic',
-    summary: 'Rip open a booster',
-    color: '#c084fc',
-    side: 'right',
   },
   // Projects render together as a fanned deck of sticker cards (one object on the layout).
   {
@@ -155,16 +147,6 @@ export const markets = {
 export const chess = {
   // TODO: your Lichess username.
   lichess: '',
-} as const;
-
-/**
- * Magic widget. Set `favorite` to a card's exact English name to guarantee it
- * in every pack (replacing a common), with your note shown under the pack.
- */
-export const magic = {
-  // TODO: your favorite card, e.g. 'Lightning Bolt', and why you love it.
-  favorite: '',
-  note: '',
 } as const;
 
 export const credits: Credit[] = [
