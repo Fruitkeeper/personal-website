@@ -2,10 +2,10 @@
 import { contact } from '../config/site';
 
 interface Props {
-  /** Section number shown in the kicker, e.g. "04". */
-  number?: string;
+  /** Centered (About page footer) or left-aligned (hero). */
+  align?: 'start' | 'center';
 }
-const { number } = Astro.props;
+const { align = 'start' } = Astro.props;
 
 type Icon = 'github' | 'linkedin' | 'x' | 'mail';
 const links: { label: string; href: string; icon: Icon; external: boolean }[] = [
@@ -25,36 +25,28 @@ const paths: Record<Exclude<Icon, 'mail'>, string> = {
 };
 ---
 
-<section id="contact" class="section contact" aria-labelledby="contact-title">
-  <header class="head">
-    {number && <p class="kicker">{number} — Contact</p>}
-    <h2 id="contact-title">Say hi</h2>
-    <p class="lede">Building something, hiring, or want a chess game? My inbox is open.</p>
-  </header>
-
+<div id="contact" class:list={['contact', align]}>
   <a class="email" href={`mailto:${contact.email}`} data-magnet data-copy-email={contact.email} aria-label={`Email ${contact.email} (click to copy)`}>
-    <span class="label" data-label>{contact.email}</span>
-    <span class="hint" aria-hidden="true">click to copy</span>
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+    <span data-label>{contact.email}</span>
   </a>
-
   <ul class="socials">
     {
       links
         .filter((l) => l.icon !== 'mail')
         .map((l) => (
           <li>
-            <a class="btn" href={l.href} target="_blank" rel="me noopener" data-magnet>
+            <a class="icon" href={l.href} target="_blank" rel="me noopener" aria-label={l.label} title={l.label} data-magnet>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d={paths[l.icon as Exclude<Icon, 'mail'>]} />
               </svg>
-              <span>{l.label}</span>
             </a>
           </li>
         ))
     }
   </ul>
   <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
-</section>
+</div>
 
 <script>
   import { mountContact } from '../scripts/contact';
@@ -62,50 +54,12 @@ const paths: Record<Exclude<Icon, 'mail'>, string> = {
 </script>
 
 <style>
-  .contact { text-align: center; padding-bottom: 6rem; }
-  .contact .head { justify-items: center; }
-  .lede { margin: 0.6rem auto 0; color: var(--text-muted); max-width: 32rem; }
-
-  .email {
-    position: relative;
-    display: inline-grid;
-    justify-items: center;
-    gap: 0.35rem;
-    margin-top: 2rem;
-    padding: 1.1rem 1.8rem;
-    border-radius: 1.2rem;
-    border: 1px solid var(--border);
-    background: rgb(255 255 255 / 0.03);
-    color: var(--text);
-    text-decoration: none;
-    translate: var(--mx, 0) var(--my, 0);
-    transition: border-color 0.3s, box-shadow 0.3s, translate 0.2s var(--ease-out);
-  }
-  .email .label {
-    font-family: var(--font-display);
-    font-size: clamp(1.1rem, 3.2vw, 2rem);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    overflow-wrap: anywhere;
-  }
-  .email .hint { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.1em; }
-  .email:hover, .email:focus-visible, .email[data-copied] {
-    border-color: rgb(34 211 238 / 0.5);
-    box-shadow: 0 0 40px -10px rgb(34 211 238 / 0.45), 0 0 60px -20px rgb(124 92 255 / 0.5);
-  }
-  .email[data-copied] .hint { color: var(--accent-2); }
-
-  .socials { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; list-style: none; margin: 1.5rem 0 0; padding: 0; }
-  .btn {
+  .contact { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+  .center { justify-content: center; }
+  .email, .icon {
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
-    padding: 0.65rem 1.1rem;
-    border-radius: 999px;
+    gap: 0.5rem;
     border: 1px solid var(--border);
     background: rgb(255 255 255 / 0.03);
     color: var(--text-muted);
@@ -113,6 +67,10 @@ const paths: Record<Exclude<Icon, 'mail'>, string> = {
     translate: var(--mx, 0) var(--my, 0);
     transition: color 0.25s, border-color 0.25s, background 0.25s, translate 0.2s var(--ease-out);
   }
-  .btn:hover, .btn:focus-visible { color: var(--text); border-color: rgb(255 255 255 / 0.25); background: rgb(255 255 255 / 0.07); }
-  svg { width: 1.05rem; height: 1.05rem; }
+  .email { padding: 0.55rem 0.95rem; border-radius: 999px; font-family: var(--font-mono); font-size: 0.8rem; }
+  .icon { justify-content: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; }
+  .email:hover, .email:focus-visible, .icon:hover, .icon:focus-visible { color: var(--text); border-color: rgb(255 255 255 / 0.25); background: rgb(255 255 255 / 0.07); }
+  .email[data-copied] { color: var(--accent-2); border-color: rgb(34 211 238 / 0.5); }
+  svg { width: 1rem; height: 1rem; flex: none; }
+  .socials { display: flex; gap: 0.5rem; list-style: none; margin: 0; padding: 0; }
 </style>

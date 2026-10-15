@@ -1,0 +1,28 @@
+---
+// Every panel the orbiting moons open: one per project and one per interest.
+// Ids match Moons.astro (project-<slug> / widget-<slug>).
+import { projects, widgets } from '../config/site';
+import { slugify } from '../lib/slug';
+import Panel from './Panel.astro';
+import ProjectPanel from './panels/ProjectPanel.astro';
+import MarketsPanel from './panels/MarketsPanel.astro';
+import BasketballPanel from './panels/BasketballPanel.astro';
+import ChessPanel from './panels/ChessPanel.astro';
+---
+
+{
+  projects.map((p) => (
+    <Panel id={`project-${slugify(p.title)}`} title={p.title} color={p.color} kind="project">
+      <ProjectPanel project={p} />
+    </Panel>
+  ))
+}
+{
+  widgets.map((w) => (
+    <Panel id={`widget-${slugify(w.title)}`} title={w.title} color={w.color} kind={w.kind}>
+      {w.kind === 'markets' && <MarketsPanel />}
+      {w.kind === 'basketball' && <BasketballPanel />}
+      {w.kind === 'chess' && <ChessPanel />}
+    </Panel>
+  ))
+}

@@ -3,30 +3,22 @@ import Base from '../layouts/Base.astro';
 import Stars from '../components/Stars.astro';
 import SiteNav from '../components/SiteNav.astro';
 import Hero from '../components/Hero.astro';
-import Work from '../components/Work.astro';
-import Experience from '../components/Experience.astro';
-import Play from '../components/Play.astro';
-import Contact from '../components/Contact.astro';
+import Panels from '../components/Panels.astro';
 ---
 
 <Base>
   <Stars />
   <SiteNav />
   <Hero />
-  <Work />
-  <Experience />
-  <Play />
-  <Contact number="04" />
+  <Panels />
 </Base>
 
 <script>
   import { mountDialogs } from '../scripts/dialogs';
-  import { mountTilt } from '../scripts/tilt';
   import { mountMarkets } from '../scripts/markets';
   import { mountToastketball } from '../scripts/toastketball';
   import { mountChess } from '../scripts/chess';
   mountDialogs();
-  mountTilt();
   mountMarkets();
   mountToastketball();
   mountChess();

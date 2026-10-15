@@ -18,7 +18,6 @@ import {
   type Shot,
 } from '../lib/toastketball';
 import { HOP_EVENT } from '../lib/toaster';
-import { setSevenSeg } from './sevenseg';
 
 const BEST_KEY = 'toastketball:best';
 const RESET_DELAY_MS = 700;
@@ -58,9 +57,6 @@ export function mountToastketball() {
   const stats = { makes: 0, shots: 0, streak: 0, best: readBest() };
   const renderStats = () => {
     for (const [k, v] of Object.entries(stats)) stat(k).textContent = String(v);
-    // The small widget shows the best streak too.
-    for (const el of document.querySelectorAll('[data-best-streak]')) el.textContent = String(stats.best);
-    for (const el of document.querySelectorAll<HTMLElement>('[data-sevenseg]')) setSevenSeg(el, stats.best);
   };
   renderStats();
 

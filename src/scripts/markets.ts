@@ -11,7 +11,6 @@ import {
   sparklinePath,
   type Coin,
 } from '../lib/markets';
-import { blockSpark } from '../lib/widget-art';
 import { MOOD_EVENT } from '../lib/toaster';
 
 const API = 'https://api.coingecko.com/api/v3/coins/markets';
@@ -95,27 +94,6 @@ function message(list: HTMLElement, text: string, className: string) {
   list.replaceChildren(li);
 }
 
-/** The small Markets widget: mood plus a price/change row per coin. */
-function updateWidget(coins: Coin[], mood: string) {
-  const moodEl = document.querySelector<HTMLElement>('[data-mw-mood]');
-  if (moodEl) moodEl.textContent = mood;
-  for (const coin of coins) {
-    const row = document.querySelector<HTMLElement>(`[data-mw-coin="${coin.id}"]`);
-    if (!row) continue;
-    row.querySelector<HTMLElement>('[data-mw-sym]')!.textContent = coin.symbol;
-    row.querySelector<HTMLElement>('[data-mw-price]')!.textContent = formatPrice(coin.price);
-    const dir = coin.change24h >= 0 ? 'up' : 'down';
-    const change = row.querySelector<HTMLElement>('[data-mw-change]')!;
-    change.textContent = `${dir === 'up' ? '▲' : '▼'}${formatChange(coin.change24h).replace(/^[+−]/, '')}`;
-    change.className = `chg ${dir}`;
-    const spark = row.querySelector<HTMLElement>('[data-mw-spark]');
-    if (spark) {
-      spark.textContent = blockSpark(coin.sparkline, 14) || spark.textContent;
-      spark.className = `spark ${dir}`;
-    }
-  }
-}
-
 export function mountMarkets() {
   const panel = document.querySelector<HTMLElement>('[data-markets]');
   if (!panel) return;
@@ -123,7 +101,7 @@ export function mountMarkets() {
   const list = panel.querySelector<HTMLElement>('[data-coin-list]')!;
   const label = panel.querySelector<HTMLElement>('[data-mood-label]')!;
   const avg = panel.querySelector<HTMLElement>('[data-mood-change]')!;
-  // The widget and its dialog both take the mood color.
+  // The markets moon and its panel both take the mood color.
   const tinted = document.querySelectorAll<HTMLElement>('[data-widget-kind="markets"]');
   const cacheKey = `${CACHE_KEY}:${ids.join(',')}`;
 
@@ -134,7 +112,6 @@ export function mountMarkets() {
     const avgChange = coins.reduce((s, c) => s + c.change24h, 0) / coins.length;
     avg.textContent = `(${formatChange(avgChange)} avg, 24h)`;
     for (const el of tinted) el.style.setProperty('--widget', moodColor(mood));
-    updateWidget(coins, moodLabel(mood));
     document.documentElement.dataset.mood = mood.toFixed(3);
     window.dispatchEvent(new CustomEvent(MOOD_EVENT, { detail: { mood } }));
   };
@@ -153,7 +130,6 @@ export function mountMarkets() {
       else {
         message(list, 'Markets are unreachable right now. The toaster is sad anyway.', 'error');
         label.textContent = 'his usual sad self';
-        updateWidget([], 'his usual sad self');
       }
     }
   };

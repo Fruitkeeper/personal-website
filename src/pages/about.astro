@@ -92,8 +92,11 @@ import { about, projects, site } from '../config/site';
         <p class="talks">Talk: {about.talks.join(' · ')}</p>
       </div>
     </section>
+    <footer class="foot">
+      <p>Want to talk? Say hi.</p>
+      <Contact align="center" />
+    </footer>
   </div>
-  <Contact />
 </Base>
 
 <style>
@@ -199,6 +202,8 @@ import { about, projects, site } from '../config/site';
   .degree { margin: 0.3rem 0 0; color: var(--text-muted); font-size: 0.92rem; }
   .talks { margin: 1rem 0 0; font-size: 0.85rem; color: var(--text-muted); }
 
+  .foot { margin-top: 5rem; text-align: center; }
+  .foot p { margin: 0 0 1rem; font-family: var(--font-display); font-size: 1.4rem; }
   @media (max-width: 700px) {
     .timeline > li { grid-template-columns: 1fr; gap: 0.4rem; }
     .when { grid-auto-flow: column; justify-content: start; gap: 0.75rem; }

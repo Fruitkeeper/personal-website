@@ -3,7 +3,7 @@ import { projects, widgets } from '../config/site';
 import { slugify } from '../lib/slug';
 import { crest } from '../lib/crest';
 
-const ICON: Record<string, string> = { markets: '📈', chess: '♟︎', basketball: '🏀' };
+const ICON: Record<string, string> = { markets: '📈', chess: '♞', basketball: '🏀' };
 const rings = [
   projects.map((p) => ({ label: p.title, mark: crest(p.title), color: p.color, target: `project-${slugify(p.title)}` })),
   widgets.map((w) => ({ label: w.title, mark: ICON[w.kind] ?? '•', color: w.color, target: `widget-${slugify(w.title)}` })),
@@ -24,7 +24,7 @@ const rings = [
           data-count={ring.length}
           data-open-dialog={m.target}
           aria-haspopup="dialog"
-          aria-label={`Open ${m.label}`}
+          aria-label={`${m.label}: open`}
           style={`--m: ${m.color}`}
         >
           <span class="ball" aria-hidden="true">{m.mark}</span>
@@ -87,14 +87,14 @@ const rings = [
     border-radius: 999px;
     background: rgb(16 16 26 / 0.9);
     border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-size: 0.68rem;
     white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.2s;
+    opacity: 0.85;
+    transition: opacity 0.2s, color 0.2s, border-color 0.2s;
     pointer-events: none;
   }
-  .moon:hover .label, .moon:focus-visible .label { opacity: 1; }
+  .moon:hover .label, .moon:focus-visible .label { opacity: 1; color: var(--text); border-color: var(--m); }
   @media (max-width: 899.98px) {
     .ball { --size: 2.1rem; font-size: 0.6rem; }
     .moon[data-ring='1'] .ball { --size: 1.8rem; font-size: 0.85rem; }

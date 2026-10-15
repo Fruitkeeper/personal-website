@@ -3,9 +3,8 @@ import { site } from '../config/site';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const links = [
-  { label: 'Work', href: '/#work' },
+  { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
-  { label: 'Contact', href: '#contact' },
 ];
 const initials = site.name
   .split(/[\s-]+/)

@@ -1,6 +1,6 @@
 # Personal website
 
-A personal site that reads top to bottom: who I am (hero, with a 3D toaster robot that watches your cursor), Work, Experience, Off the clock (playable widgets), and Contact. Plus a full About page. Built with Astro; deployed on Vercel.
+One screen that says who I am — name, what I do, the proof, contact — next to a 3D toaster robot that watches your cursor. My projects and interests orbit him; click one to dive in. The full story lives on the About page. Built with Astro; deployed on Vercel.
 
 > The earlier full site (header, projects, blog, about, RSS) is preserved at the git tag `full-site-before-strip`:
 > `git checkout full-site-before-strip -- src tests` restores its files.
@@ -22,18 +22,18 @@ Everything personal is in `src/config/site.ts`:
 
 - `site` — name, the one-line `headline` (what you do) and `intro` (the proof) in the hero.
 - `contact` — GitHub, LinkedIn, X, email. **LinkedIn and X are placeholders (`your-handle`).**
-- `projects` — the Work cards, most important first: role, period, description, highlights (the first is the card's headline outcome), tags, public links.
-- `widgets` — the Off-the-clock objects (`markets`, `chess`, `basketball`), with `markets.coins` and `chess.lichess` settings.
-- `about` — the About page: intro, experience (also shown condensed on the home page), education, tools & languages. Phone number deliberately excluded (tested).
+- `projects` — the inner orbit (moons with crest letters), most important first: role, period, description, highlights, tags, public links. Each opens a panel; the About page lists them too.
+- `widgets` — the outer orbit: interests (`markets`, `chess`, `basketball`) that open playable panels, with `markets.coins` and `chess.lichess` settings.
+- `about` — the About page: intro, experience, education, tools & languages. Phone number deliberately excluded (tested).
 - `credits` — third-party attribution (currently only a `<meta name="attribution">`).
 
 ## Pieces
 
-- **Home** (`src/pages/index.astro`): `SiteNav` → `Hero` (copy + `Toaster`) → `Work` (project cards → panels) → `Experience` (condensed timeline) → `Play` (terminal, chess board, scoreboard → panels) → `Contact` (copy-email button + socials).
-- **Panels**: one shell (`src/components/Panel.astro`) around each panel body in `src/components/panels/`; opened by `src/scripts/dialogs.ts`.
-- **Widgets** (`src/components/widgets/`): bespoke objects — CRT trading terminal, walnut mini board with today's puzzle and a SOLVED stamp, LED seven-segment scoreboard. They float and tilt toward the cursor (`src/scripts/tilt.ts`). Pure helpers + tests in `src/lib/`.
+- **Home** (`src/pages/index.astro`): `SiteNav` → `Hero` (copy + compact `Contact` + `Toaster` with `Moons` orbiting) → `Panels` (every dialog the moons open).
+- **Orbit** (`src/components/Moons.astro`, `src/scripts/orbit.ts`, math + tests in `src/lib/orbit.ts`): projects on the inner ring, interests on the outer (slower, reversed). Labels always visible; hover/focus or an open panel stops it; pauses offscreen; static under reduced motion.
+- **Panels**: one shell (`src/components/Panel.astro`) around each body in `src/components/panels/`; opened by `src/scripts/dialogs.ts`.
 - **Toaster reactions**: window events `toaster:mood` (markets) and `toaster:hop` (a Toast-ketball make, a solved puzzle).
-- **External data**: CoinGecko and Lichess public APIs, called from the browser (no keys); each panel degrades gracefully when its API is unreachable.
+- **External data**: CoinGecko and Lichess public APIs from the browser (no keys); panels degrade gracefully offline.
 
 ## The toaster
 
