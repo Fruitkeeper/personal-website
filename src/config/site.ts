@@ -2,38 +2,38 @@
 
 export type Link = { label: string; href: string };
 
-type WidgetBase = {
+/** A project in the Work section; opens a panel with the full story. */
+export type Project = {
   title: string;
-  /** One line, shown on the widget. */
+  /** One line under the title. */
   summary: string;
-  /** Accent color (hex). The markets widget recolors itself by mood. */
+  /** Your role, e.g. "Co-founder & CPO". */
+  role: string;
+  /** When, e.g. "2025 – 2026". */
+  period: string;
+  /** A few sentences on what it is, shown when opened. */
+  description: string;
+  /** What you did / what came of it, one line each. The first is the card's headline outcome. */
+  highlights: string[];
+  tags: string[];
+  /** Public links only — a private repo would 404 for visitors. */
+  links?: Link[];
+  /** Accent color (hex). */
   color: string;
-  /** Which side of the toaster it sits on (desktop). */
-  side: 'left' | 'right';
 };
 
 /**
- * Each widget is a different kind of experience; `kind` picks what it shows
- * and the panel it opens.
+ * Interactive "Off the clock" objects. `kind` picks the design and the panel
+ * it opens.
  */
-export type Widget =
-  | (WidgetBase & {
-      kind: 'project';
-      /** Your role, e.g. "Co-founder & CPO". */
-      role: string;
-      /** When, e.g. "2025 – 2026". */
-      period: string;
-      /** A few sentences on what it is, shown when opened. */
-      description: string;
-      /** What you did / what came of it — one line each. */
-      highlights: string[];
-      tags: string[];
-      /** Public links only — a private repo would 404 for visitors. */
-      links?: Link[];
-    })
-  | (WidgetBase & { kind: 'markets' })
-  | (WidgetBase & { kind: 'basketball' })
-  | (WidgetBase & { kind: 'chess' });
+export type Widget = {
+  kind: 'markets' | 'basketball' | 'chess';
+  title: string;
+  /** One line, for screen readers and the panel. */
+  summary: string;
+  /** Accent color (hex). The markets widget recolors itself by mood. */
+  color: string;
+};
 
 export type WidgetKind = Widget['kind'];
 
@@ -45,11 +45,12 @@ export type Credit = { work: string; author: string; href: string; license: stri
 
 export const site = {
   name: 'Luis Gomez-Acebo',
-  // Shown under your name. Keep it to one short line.
-  tagline: 'Builder. Into chess, hoops, Magic and markets.',
-  // One line under the tagline on the About page.
+  // The one sentence that says what you do (hero).
+  headline: 'I build AI products and robots.',
+  // The proof, right under it. Keep it to two short sentences.
+  intro: 'Co-founded Skoll (€0 → €160K ARR in four months), researched drone swarms that fly in formation, and won an OpenAI hackathon. Based in Madrid.',
   location: 'Madrid, Spain',
-  description: 'Personal website of Luis Gomez-Acebo — builder, into chess, basketball, Magic: The Gathering and markets.',
+  description: 'Luis Gomez-Acebo builds AI products and robots: co-founder of Skoll, drone-swarm researcher, OpenAI hackathon winner. Based in Madrid.',
 } as const;
 
 export const contact = {
@@ -61,31 +62,9 @@ export const contact = {
   email: 'gomez.acebo.luis@gmail.com',
 } as const;
 
-export const widgets: Widget[] = [
+/** Work, most important first. */
+export const projects: Project[] = [
   {
-    kind: 'markets',
-    title: 'Markets',
-    summary: "The toaster's mood follows crypto",
-    color: '#94a3b8',
-    side: 'left',
-  },
-  {
-    kind: 'basketball',
-    title: 'Toast-ketball',
-    summary: 'Flick toast into the slot',
-    color: '#fb923c',
-    side: 'right',
-  },
-  {
-    kind: 'chess',
-    title: 'Chess',
-    summary: "Beat the toaster's daily puzzle",
-    color: '#cbd5e1',
-    side: 'left',
-  },
-  // Projects render together as a fanned deck of sticker cards (one object on the layout).
-  {
-    kind: 'project',
     title: 'Skoll',
     summary: 'My last startup: the AI GTM Engineer',
     role: 'Co-founder & CPO',
@@ -100,10 +79,8 @@ export const widgets: Widget[] = [
     tags: ['AI agents', 'React', 'FastAPI', 'AWS'],
     links: [{ label: 'useskoll.com', href: 'https://useskoll.com' }],
     color: '#38bdf8',
-    side: 'right',
   },
   {
-    kind: 'project',
     title: 'UAV Swarm',
     summary: 'Formation flight for a swarm of drones',
     role: 'Research assistant · Swarms Systems Lab',
@@ -118,10 +95,22 @@ export const widgets: Widget[] = [
     ],
     tags: ['ROS 2', 'Computer vision', 'SLAM', 'C++', 'Python'],
     color: '#a3e635',
-    side: 'right',
   },
   {
-    kind: 'project',
+    title: 'Fiscochat',
+    summary: 'A legal AI assistant, built at a hackathon',
+    role: 'Co-builder',
+    period: '2024',
+    description:
+      'A RAG-based legal assistant that answers tax and legal questions from the source documents. Co-built with one other engineer in two months.',
+    highlights: [
+      'Won an OpenAI hackathon.',
+      'Sold to an Italian law firm, turning the prototype into paid usage.',
+    ],
+    tags: ['LangChain', 'RAG', 'OpenAI API'],
+    color: '#fb923c',
+  },
+  {
     title: 'Mister Manager',
     summary: 'Fantasy football with a transfer market',
     role: 'Founder & engineer',
@@ -134,8 +123,14 @@ export const widgets: Widget[] = [
     ],
     tags: ['Django', 'React Native', 'PostgreSQL'],
     color: '#f472b6',
-    side: 'right',
   },
+];
+
+/** Off-the-clock objects, in display order. */
+export const widgets: Widget[] = [
+  { kind: 'markets', title: 'Markets', summary: "The toaster's mood follows crypto", color: '#94a3b8' },
+  { kind: 'chess', title: 'Chess', summary: "Beat the toaster's daily puzzle", color: '#cbd5e1' },
+  { kind: 'basketball', title: 'Toast-ketball', summary: 'Flick toast into the slot', color: '#fb923c' },
 ];
 
 /** Coins the Markets widget tracks (CoinGecko ids). Their average 24h move sets the toaster's mood. */
@@ -235,20 +230,6 @@ export const about = {
       color: '#fbbf24',
     },
   ] satisfies Role[],
-  sideProjects: [
-    {
-      title: 'Fiscochat',
-      period: 'Nov 2024',
-      text: 'A RAG-based legal AI assistant, co-built in 2 months. Won an OpenAI hackathon and was then sold to an Italian law firm.',
-      tags: ['LangChain', 'RAG', 'OpenAI API'],
-    },
-    {
-      title: 'Voice-controlled drone swarm',
-      period: 'Jul 2025',
-      text: 'Two Crazyflie drones that follow spoken commands: MCP turns speech into flight instructions, and guided vector fields handle following and formations.',
-      tags: ['MCP', 'GVF', 'Python'],
-    },
-  ],
   education: {
     school: 'IE University',
     degree: 'BSc Computer Science & Artificial Intelligence',

@@ -1,7 +1,7 @@
 
 ## Project notes
 
-- The site is one page: name (`Intro.astro`), the toaster (`Toaster.astro`), widgets that open panels (`Widgets.astro`), contact dock (`Contact.astro`). The older multi-page site is at git tag `full-site-before-strip`.
+- Home reads top to bottom: `SiteNav`, `Hero` (with `Toaster`), `Work`, `Experience`, `Play`, `Contact`; plus `/about`. All panels use `Panel.astro`. The older multi-page site is at git tag `full-site-before-strip`.
 - Everything personal (name, contact, widgets, chess/markets settings, About page, credits) lives in `src/config/site.ts`. The toaster's CC BY-NC credit is currently only a `<meta name="attribution">` (the owner chose to remove the visible one).
 - Pure logic lives in `src/lib/*.ts` and is unit tested in `tests/`.
 - Run `npm run verify` (check + test + build) before considering a change done.

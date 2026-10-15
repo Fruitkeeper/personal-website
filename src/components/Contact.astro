@@ -1,6 +1,12 @@
 ---
 import { contact } from '../config/site';
 
+interface Props {
+  /** Section number shown in the kicker, e.g. "04". */
+  number?: string;
+}
+const { number } = Astro.props;
+
 type Icon = 'github' | 'linkedin' | 'x' | 'mail';
 const links: { label: string; href: string; icon: Icon; external: boolean }[] = [
   { label: 'GitHub', href: contact.github, icon: 'github', external: true },
@@ -19,41 +25,36 @@ const paths: Record<Exclude<Icon, 'mail'>, string> = {
 };
 ---
 
-<nav class="dock" aria-label="Contact">
-  <span class="tag" aria-hidden="true">say hi</span>
-  <ul>
+<section id="contact" class="section contact" aria-labelledby="contact-title">
+  <header class="head">
+    {number && <p class="kicker">{number} — Contact</p>}
+    <h2 id="contact-title">Say hi</h2>
+    <p class="lede">Building something, hiring, or want a chess game? My inbox is open.</p>
+  </header>
+
+  <a class="email" href={`mailto:${contact.email}`} data-magnet data-copy-email={contact.email} aria-label={`Email ${contact.email} (click to copy)`}>
+    <span class="label" data-label>{contact.email}</span>
+    <span class="hint" aria-hidden="true">click to copy</span>
+  </a>
+
+  <ul class="socials">
     {
-      links.map((l, i) => (
-        <li style={`--i: ${i}`}>
-          <a
-            class="btn"
-            href={l.href}
-            data-magnet
-            data-copy-email={l.icon === 'mail' ? contact.email : undefined}
-            target={l.external ? '_blank' : undefined}
-            rel={l.external ? 'me noopener' : undefined}
-            aria-label={l.icon === 'mail' ? `Email (copies ${contact.email})` : l.label}
-          >
-            {l.icon === 'mail' ? (
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="20" height="16" x="2" y="4" rx="2" />
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-              </svg>
-            ) : (
+      links
+        .filter((l) => l.icon !== 'mail')
+        .map((l) => (
+          <li>
+            <a class="btn" href={l.href} target="_blank" rel="me noopener" data-magnet>
               <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="currentColor" d={paths[l.icon]} />
+                <path fill="currentColor" d={paths[l.icon as Exclude<Icon, 'mail'>]} />
               </svg>
-            )}
-            <span class="label" data-label aria-hidden="true">{l.icon === 'mail' ? contact.email : l.label}</span>
-          </a>
-        </li>
-      ))
+              <span>{l.label}</span>
+            </a>
+          </li>
+        ))
     }
   </ul>
-</nav>
-
-<p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
-
+  <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
+</section>
 
 <script>
   import { mountContact } from '../scripts/contact';
@@ -61,116 +62,57 @@ const paths: Record<Exclude<Icon, 'mail'>, string> = {
 </script>
 
 <style>
-  .dock {
-    position: fixed;
-    right: clamp(1rem, 2.5vw, 2rem);
-    bottom: clamp(1rem, 2.5vw, 2rem);
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.9rem;
-  }
+  .contact { text-align: center; padding-bottom: 6rem; }
+  .contact .head { justify-items: center; }
+  .lede { margin: 0.6rem auto 0; color: var(--text-muted); max-width: 32rem; }
 
-  /* Vertical "say hi" label above the dock, with a fading rule. */
-  .tag {
-    writing-mode: vertical-rl;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .tag::after {
-    content: '';
-    width: 1px;
-    height: 2.5rem;
-    background: linear-gradient(var(--text-muted), transparent);
-  }
-
-  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
-  li { animation: dock-in 0.6s var(--ease-out) both; animation-delay: calc(0.6s + var(--i) * 80ms); }
-  @keyframes dock-in { from { opacity: 0; transform: translateX(24px) scale(0.6); } }
-
-  .btn {
+  .email {
     position: relative;
-    display: grid;
-    place-items: center;
-    width: 2.9rem;
-    height: 2.9rem;
-    border-radius: 50%;
-    color: var(--text-muted);
-    background: rgb(20 20 32 / 0.6);
+    display: inline-grid;
+    justify-items: center;
+    gap: 0.35rem;
+    margin-top: 2rem;
+    padding: 1.1rem 1.8rem;
+    border-radius: 1.2rem;
     border: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    text-decoration: none;
-    transition: color 0.25s, background 0.25s, box-shadow 0.35s, scale 0.35s var(--ease-out), translate 0.2s var(--ease-out);
-    /* Set by scripts/contact.ts while the cursor is near. */
-    translate: var(--mx, 0) var(--my, 0);
-  }
-  svg { width: 1.15rem; height: 1.15rem; position: relative; z-index: 1; }
-
-  /* Spinning gradient ring, revealed on hover/focus. */
-  .btn::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 50%;
-    background: conic-gradient(var(--accent-1), var(--accent-2), var(--accent-3), var(--accent-1));
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
-    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
-    opacity: 0;
-    transition: opacity 0.3s;
-    animation: spin 2.5s linear infinite;
-  }
-  @keyframes spin { to { rotate: 1turn; } }
-
-  .btn:hover, .btn:focus-visible, .btn[data-copied] {
+    background: rgb(255 255 255 / 0.03);
     color: var(--text);
-    background: rgb(30 30 48 / 0.85);
-    box-shadow: 0 0 28px -4px rgb(34 211 238 / 0.45), 0 0 50px -10px rgb(124 92 255 / 0.5);
-    scale: 1.08;
+    text-decoration: none;
+    translate: var(--mx, 0) var(--my, 0);
+    transition: border-color 0.3s, box-shadow 0.3s, translate 0.2s var(--ease-out);
   }
-  .btn:hover::before, .btn:focus-visible::before, .btn[data-copied]::before { opacity: 1; }
+  .email .label {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 3.2vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    overflow-wrap: anywhere;
+  }
+  .email .hint { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.1em; }
+  .email:hover, .email:focus-visible, .email[data-copied] {
+    border-color: rgb(34 211 238 / 0.5);
+    box-shadow: 0 0 40px -10px rgb(34 211 238 / 0.45), 0 0 60px -20px rgb(124 92 255 / 0.5);
+  }
+  .email[data-copied] .hint { color: var(--accent-2); }
 
-  /* Label pill that slides out to the left. */
-  .label {
-    position: absolute;
-    right: calc(100% + 0.75rem);
-    top: 50%;
-    padding: 0.35rem 0.75rem;
+  .socials { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; list-style: none; margin: 1.5rem 0 0; padding: 0; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 1.1rem;
     border-radius: 999px;
     border: 1px solid var(--border);
-    background: rgb(16 16 26 / 0.9);
-    color: var(--text);
-    font-size: 0.8rem;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transform: translate(10px, -50%);
-    transition: opacity 0.25s, transform 0.35s var(--ease-out);
+    background: rgb(255 255 255 / 0.03);
+    color: var(--text-muted);
+    text-decoration: none;
+    translate: var(--mx, 0) var(--my, 0);
+    transition: color 0.25s, border-color 0.25s, background 0.25s, translate 0.2s var(--ease-out);
   }
-  .btn:hover .label, .btn:focus-visible .label, .btn[data-copied] .label { opacity: 1; transform: translate(0, -50%); }
-  .btn[data-copied] .label { color: var(--accent-2); }
-
-
-
-  /* Stacked (phone) layout: the page scrolls, so the dock becomes a row at the end of it. */
-  @media (max-width: 899.98px) {
-    .dock { position: relative; right: auto; bottom: auto; flex-direction: row; justify-content: center; padding: 0 1.25rem 2.5rem; }
-    ul { flex-direction: row; gap: 0.8rem; }
-    .tag { display: none; }
-    /* Labels would slide out sideways off the row; show them below instead. */
-    .label { right: auto; left: 50%; top: calc(100% + 0.5rem); transform: translate(-50%, -4px); }
-    .btn:hover .label, .btn:focus-visible .label, .btn[data-copied] .label { transform: translate(-50%, 0); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    li { animation: none; }
-    .btn::before { animation: none; }
-  }
+  .btn:hover, .btn:focus-visible { color: var(--text); border-color: rgb(255 255 255 / 0.25); background: rgb(255 255 255 / 0.07); }
+  svg { width: 1.05rem; height: 1.05rem; }
 </style>

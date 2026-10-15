@@ -1,0 +1,68 @@
+---
+/** The dialog shell every card/object opens (see scripts/dialogs.ts). */
+interface Props {
+  id: string;
+  title: string;
+  color: string;
+  /** Lets scripts find a panel by what it holds (e.g. the markets one recolors itself). */
+  kind: string;
+}
+
+const { id, title, color, kind } = Astro.props;
+---
+
+<dialog id={id} class="panel" aria-labelledby={`${id}-title`} data-widget-kind={kind} style={`--widget: ${color}`}>
+  <form method="dialog">
+    <button class="close" aria-label="Close">×</button>
+  </form>
+  <h2 id={`${id}-title`}>
+    <span class="dot" aria-hidden="true"></span>
+    {title}
+  </h2>
+  <slot />
+</dialog>
+
+<style>
+  .panel {
+    /* Tailwind's preflight zeroes margins; restore the UA centering for modals. */
+    margin: auto;
+    width: min(34rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+    padding: 2rem;
+    color: var(--text);
+    background: rgb(16 16 26 / 0.92);
+    border: 1px solid color-mix(in srgb, var(--widget) 30%, var(--border));
+    border-radius: var(--radius);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.8), 0 0 60px -30px var(--widget);
+  }
+  .panel[open] { animation: panel-in 0.35s var(--ease-out); }
+  .panel::backdrop { background: rgb(4 4 8 / 0.6); backdrop-filter: blur(3px); }
+  @keyframes panel-in { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
+  h2 { display: flex; align-items: center; gap: 0.6rem; font-size: 1.6rem; margin: 0 0 1rem; }
+  .dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--widget);
+    box-shadow: 0 0 10px var(--widget);
+    flex: none;
+    transition: background 1s, box-shadow 1s;
+  }
+  .close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .close:hover { color: var(--text); background: var(--surface); }
+</style>

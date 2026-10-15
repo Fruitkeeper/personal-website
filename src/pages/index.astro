@@ -1,16 +1,33 @@
 ---
 import Base from '../layouts/Base.astro';
 import Stars from '../components/Stars.astro';
-import Intro from '../components/Intro.astro';
-import Toaster from '../components/Toaster.astro';
-import Widgets from '../components/Widgets.astro';
+import SiteNav from '../components/SiteNav.astro';
+import Hero from '../components/Hero.astro';
+import Work from '../components/Work.astro';
+import Experience from '../components/Experience.astro';
+import Play from '../components/Play.astro';
 import Contact from '../components/Contact.astro';
 ---
 
 <Base>
   <Stars />
-  <Intro />
-  <Toaster />
-  <Widgets />
-  <Contact />
+  <SiteNav />
+  <Hero />
+  <Work />
+  <Experience />
+  <Play />
+  <Contact number="04" />
 </Base>
+
+<script>
+  import { mountDialogs } from '../scripts/dialogs';
+  import { mountTilt } from '../scripts/tilt';
+  import { mountMarkets } from '../scripts/markets';
+  import { mountToastketball } from '../scripts/toastketball';
+  import { mountChess } from '../scripts/chess';
+  mountDialogs();
+  mountTilt();
+  mountMarkets();
+  mountToastketball();
+  mountChess();
+</script>

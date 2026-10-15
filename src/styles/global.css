@@ -93,3 +93,23 @@ pre { border-radius: var(--radius); padding: 1.25rem; overflow-x: auto; border: 
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
+
+/* ── Page sections (home + about) ─────────────────────────────────────────── */
+.section {
+  position: relative;
+  z-index: 1;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: clamp(3.5rem, 8vw, 6rem) clamp(1.25rem, 4vw, 3rem) 0;
+  scroll-margin-top: 4rem;
+}
+.section > .head { display: grid; margin-bottom: 2rem; }
+.section .kicker {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+.section h2 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -0.03em; }

@@ -1,25 +1,25 @@
 ---
-import type { Widget } from '../../config/site';
+import type { Project } from '../../config/site';
 
 interface Props {
-  widget: Extract<Widget, { kind: 'project' }>;
+  project: Project;
 }
 
-const { widget } = Astro.props;
+const { project } = Astro.props;
 ---
 
-<p class="meta">{widget.role} · {widget.period}</p>
-<p>{widget.description}</p>
+<p class="meta">{project.role} · {project.period}</p>
+<p>{project.description}</p>
 <ul class="highlights">
-  {widget.highlights.map((h) => <li>{h}</li>)}
+  {project.highlights.map((h) => <li>{h}</li>)}
 </ul>
 <ul class="tags" aria-label="Technologies">
-  {widget.tags.map((t) => <li>{t}</li>)}
+  {project.tags.map((t) => <li>{t}</li>)}
 </ul>
 {
-  widget.links && widget.links.length > 0 && (
+  project.links && project.links.length > 0 && (
     <p class="links">
-      {widget.links.map((l) => (
+      {project.links.map((l) => (
         <a href={l.href} target="_blank" rel="noopener noreferrer">
           {l.label} ↗
         </a>

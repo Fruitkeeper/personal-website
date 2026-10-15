@@ -2,13 +2,14 @@
 import Base from '../layouts/Base.astro';
 import Stars from '../components/Stars.astro';
 import Contact from '../components/Contact.astro';
-import { about, site } from '../config/site';
+import SiteNav from '../components/SiteNav.astro';
+import { about, projects, site } from '../config/site';
 ---
 
 <Base title="About" description={`About ${site.name}: ${about.intro[0]}`}>
   <Stars />
+  <SiteNav />
   <div class="page">
-    <a class="back" href="/"><span aria-hidden="true">←</span> Back to the toaster</a>
 
     <header class="hero">
       <p class="eyebrow">About</p>
@@ -54,14 +55,14 @@ import { about, site } from '../config/site';
     </section>
 
     <section aria-labelledby="side-title">
-      <h2 id="side-title"><span>02</span> On the side</h2>
+      <h2 id="side-title"><span>02</span> Projects</h2>
       <div class="side">
         {
-          about.sideProjects.map((p) => (
-            <article>
-              <p class="period">{p.period}</p>
+          projects.map((p) => (
+            <article style={`--c: ${p.color}`}>
+              <p class="period">{p.role} · {p.period}</p>
               <h3>{p.title}</h3>
-              <p>{p.text}</p>
+              <p>{p.description}</p>
               <ul class="chips">
                 {p.tags.map((t) => <li>{t}</li>)}
               </ul>
@@ -103,19 +104,8 @@ import { about, site } from '../config/site';
     margin: 0 auto;
     padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 2.5rem) 8rem;
   }
-  .back {
-    display: inline-flex;
-    gap: 0.4rem;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    text-decoration: none;
-  }
-  .back:hover { color: var(--text); }
-  .back span { transition: translate 0.3s var(--ease-out); }
-  .back:hover span { translate: -3px 0; }
 
-  .hero { margin: 3.5rem 0 2.5rem; }
+  .hero { margin: 2.5rem 0 2.5rem; }
   .eyebrow { margin: 0 0 0.6rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent-2); }
   h1 {
     margin: 0;
@@ -188,7 +178,7 @@ import { about, site } from '../config/site';
     background: rgb(18 18 30 / 0.55);
     backdrop-filter: blur(10px);
   }
-  .side .period { margin: 0; font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-2); }
+  .side .period { margin: 0; font-family: var(--font-mono); font-size: 0.72rem; color: var(--c); }
   .side h3 { margin: 0.35rem 0 0.5rem; font-size: 1.15rem; }
   .side p { color: var(--text-muted); font-size: 0.93rem; line-height: 1.55; margin: 0; }
 

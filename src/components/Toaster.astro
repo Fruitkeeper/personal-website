@@ -14,11 +14,10 @@
 </script>
 
 <style>
+  /* Fills whatever block it's placed in (the hero's toaster column). */
   .stage {
-    position: fixed;
+    position: absolute;
     inset: 0;
-    /* Widgets sit above this (z 2) so they're always clickable — see Widgets.astro. */
-    z-index: 1;
     display: grid;
     place-items: center;
   }
@@ -33,10 +32,6 @@
   }
   .scene[data-ready] { opacity: 1; }
 
-  /* Phones: the page scrolls, so the toaster gets its own block under the name. */
-  @media (max-width: 899.98px) {
-    .stage { position: relative; inset: auto; height: 42svh; }
-  }
   /* Soft light behind the toaster; also the placeholder while it loads. */
   .glow {
     width: min(48vmin, 26rem);
