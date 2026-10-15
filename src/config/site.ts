@@ -257,7 +257,7 @@ export const about = {
     {
       title: 'Fiscochat',
       period: 'Nov 2024',
-      text: "A RAG-based legal AI assistant, co-built in 2 months. Won OpenAI's official use-case competition and was sold to an Italian law firm.",
+      text: 'A RAG-based legal AI assistant, co-built in 2 months. Won an OpenAI hackathon and was then sold to an Italian law firm.',
       tags: ['LangChain', 'RAG', 'OpenAI API'],
     },
     {
