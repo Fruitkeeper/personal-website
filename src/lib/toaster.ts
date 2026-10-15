@@ -94,8 +94,8 @@ export const STACKED_BELOW = 900;
 
 /**
  * Empty space around the toaster when framing it in its block (0.15 = tight).
- * Phones get a little tighter framing since the block is shorter.
+ * Leaves room for the moons orbiting around it (Moons.astro); phones slightly tighter.
  */
 export function frameMargin(viewportWidth: number): number {
-  return viewportWidth < STACKED_BELOW ? 0.3 : 0.45;
+  return viewportWidth < STACKED_BELOW ? 1.0 : 1.1;
 }

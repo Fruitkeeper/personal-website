@@ -1,6 +1,7 @@
 ---
 import { site } from '../config/site';
 import Toaster from './Toaster.astro';
+import Moons from './Moons.astro';
 
 // First name on its own line, so a long surname never breaks at a hyphen.
 const [first, ...rest] = site.name.split(' ');
@@ -24,6 +25,7 @@ const last = rest.join(' ');
   </div>
   <div class="stage">
     <Toaster />
+    <Moons />
   </div>
 </section>
 
@@ -82,7 +84,7 @@ const last = rest.join(' ');
   .more span { display: inline-block; transition: translate 0.3s var(--ease-out); }
   .more:hover span { translate: 3px 0; }
 
-  .stage { position: relative; height: min(70dvh, 40rem); }
+  .stage { position: relative; height: min(74dvh, 42rem); }
 
   @media (max-width: 899.98px) {
     .hero { grid-template-columns: 1fr; min-height: auto; gap: 0; padding-top: 1.5rem; }

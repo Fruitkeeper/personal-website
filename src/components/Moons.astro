@@ -1,0 +1,102 @@
+---
+import { projects, widgets } from '../config/site';
+import { slugify } from '../lib/slug';
+import { crest } from '../lib/crest';
+
+const ICON: Record<string, string> = { markets: '📈', chess: '♟︎', basketball: '🏀' };
+const rings = [
+  projects.map((p) => ({ label: p.title, mark: crest(p.title), color: p.color, target: `project-${slugify(p.title)}` })),
+  widgets.map((w) => ({ label: w.title, mark: ICON[w.kind] ?? '•', color: w.color, target: `widget-${slugify(w.title)}` })),
+];
+---
+
+<div class="orbit" data-orbit>
+  <svg class="rings" aria-hidden="true"><ellipse data-ring="0" cx="50%" cy="50%" /><ellipse data-ring="1" cx="50%" cy="50%" /></svg>
+  {
+    rings.map((ring, r) =>
+      ring.map((m, i) => (
+        <button
+          type="button"
+          class="moon"
+          data-moon
+          data-ring={r}
+          data-index={i}
+          data-count={ring.length}
+          data-open-dialog={m.target}
+          aria-haspopup="dialog"
+          aria-label={`Open ${m.label}`}
+          style={`--m: ${m.color}`}
+        >
+          <span class="ball" aria-hidden="true">{m.mark}</span>
+          <span class="label" aria-hidden="true">{m.label}</span>
+        </button>
+      )),
+    )
+  }
+</div>
+
+<script>
+  import { mountOrbit } from '../scripts/orbit';
+  mountOrbit();
+</script>
+
+<style>
+  .orbit { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+  .rings { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rings ellipse { fill: none; stroke: rgb(255 255 255 / 0.08); stroke-dasharray: 2 6; }
+  .moon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+  }
+  .ball {
+    display: grid;
+    place-items: center;
+    width: var(--size, 2.6rem);
+    height: var(--size, 2.6rem);
+    border-radius: 50%;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: -0.02em;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+    background:
+      radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.55), transparent 30%),
+      radial-gradient(circle at 40% 40%, var(--m), color-mix(in srgb, var(--m) 30%, #05050a) 80%);
+    box-shadow: 0 0 18px -3px var(--m), inset -4px -6px 10px rgb(0 0 0 / 0.45);
+    transition: scale 0.3s var(--ease-out), box-shadow 0.3s;
+  }
+  .moon[data-ring='1'] .ball { --size: 2.2rem; font-size: 1rem; }
+  .moon:hover .ball, .moon:focus-visible .ball { scale: 1.2; box-shadow: 0 0 30px 2px var(--m), inset -4px -6px 10px rgb(0 0 0 / 0.45); }
+  .moon:focus-visible { outline: none; }
+  .moon:focus-visible .ball { outline: 2px solid var(--m); outline-offset: 3px; }
+  .label {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 50%;
+    translate: -50% 0;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: rgb(16 16 26 / 0.9);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.72rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .moon:hover .label, .moon:focus-visible .label { opacity: 1; }
+  @media (max-width: 899.98px) {
+    .ball { --size: 2.1rem; font-size: 0.6rem; }
+    .moon[data-ring='1'] .ball { --size: 1.8rem; font-size: 0.85rem; }
+  }
+</style>
