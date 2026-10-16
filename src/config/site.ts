@@ -141,8 +141,7 @@ export const markets = {
  * your chess.com username to show your ratings under it (empty hides them).
  */
 export const chess = {
-  // TODO: your chess.com username.
-  chesscom: '',
+  chesscom: 'fruitkeeper',
 } as const;
 
 export const credits: Credit[] = [
