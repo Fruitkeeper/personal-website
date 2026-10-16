@@ -6,7 +6,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 // TODO: replace with your real domain once it's connected in Vercel.
-const SITE_URL = 'https://your-domain.com';
+const SITE_URL = 'https://luisgomezacebo.com';
 
 // https://astro.build/config
 export default defineConfig({
