@@ -1,7 +1,7 @@
 
 ## Project notes
 
-- Home is one screen: `SiteNav`, `Hero` (copy, compact `Contact`, `Toaster` + orbiting `Moons`), and `Panels` (the dialogs moons open); `/about` has the full story. All panels use `Panel.astro`. The older multi-page site is at git tag `full-site-before-strip`.
+- Home is one screen, no nav bar: `Hero` (copy, compact `Contact`, `Toaster` + orbiting `Moons`), and `Panels` (the dialogs moons open); `/about` has the full story (with a ← Home link). Moon icons live in `src/lib/icons.ts`; each project/widget picks one via `icon`. All panels use `Panel.astro`. The older multi-page site is at git tag `full-site-before-strip`.
 - Everything personal (name, contact, widgets, chess/markets settings, About page, credits) lives in `src/config/site.ts`. The toaster's CC BY-NC credit is currently only a `<meta name="attribution">` (the owner chose to remove the visible one).
 - Pure logic lives in `src/lib/*.ts` and is unit tested in `tests/`.
 - Run `npm run verify` (check + test + build) before considering a change done.

@@ -1,12 +1,11 @@
 ---
 import { projects, widgets } from '../config/site';
 import { slugify } from '../lib/slug';
-import { crest } from '../lib/crest';
+import { ICONS } from '../lib/icons';
 
-const ICON: Record<string, string> = { markets: '📈', chess: '♞', basketball: '🏀' };
 const rings = [
-  projects.map((p) => ({ label: p.title, mark: crest(p.title), color: p.color, target: `project-${slugify(p.title)}` })),
-  widgets.map((w) => ({ label: w.title, mark: ICON[w.kind] ?? '•', color: w.color, target: `widget-${slugify(w.title)}` })),
+  projects.map((p) => ({ label: p.title, icon: p.icon, color: p.color, target: `project-${slugify(p.title)}` })),
+  widgets.map((w) => ({ label: w.title, icon: w.icon, color: w.color, target: `widget-${slugify(w.title)}` })),
 ];
 ---
 
@@ -27,7 +26,9 @@ const rings = [
           aria-label={`${m.label}: open`}
           style={`--m: ${m.color}`}
         >
-          <span class="ball" aria-hidden="true">{m.mark}</span>
+          <span class="ball" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS[m.icon]} />
+          </span>
           <span class="label" aria-hidden="true">{m.label}</span>
         </button>
       )),
@@ -63,18 +64,14 @@ const rings = [
     height: var(--size, 2.6rem);
     border-radius: 50%;
     color: #fff;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.72rem;
-    letter-spacing: -0.02em;
-    text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
     background:
       radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.55), transparent 30%),
       radial-gradient(circle at 40% 40%, var(--m), color-mix(in srgb, var(--m) 30%, #05050a) 80%);
     box-shadow: 0 0 18px -3px var(--m), inset -4px -6px 10px rgb(0 0 0 / 0.45);
     transition: scale 0.3s var(--ease-out), box-shadow 0.3s;
   }
-  .moon[data-ring='1'] .ball { --size: 2.2rem; font-size: 1rem; }
+  .ball svg { width: 52%; height: 52%; filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.7)); }
+  .moon[data-ring='1'] .ball { --size: 2.2rem; }
   .moon:hover .ball, .moon:focus-visible .ball { scale: 1.2; box-shadow: 0 0 30px 2px var(--m), inset -4px -6px 10px rgb(0 0 0 / 0.45); }
   .moon:focus-visible { outline: none; }
   .moon:focus-visible .ball { outline: 2px solid var(--m); outline-offset: 3px; }
@@ -96,7 +93,7 @@ const rings = [
   }
   .moon:hover .label, .moon:focus-visible .label { opacity: 1; color: var(--text); border-color: var(--m); }
   @media (max-width: 899.98px) {
-    .ball { --size: 2.1rem; font-size: 0.6rem; }
-    .moon[data-ring='1'] .ball { --size: 1.8rem; font-size: 0.85rem; }
+    .ball { --size: 2.1rem; }
+    .moon[data-ring='1'] .ball { --size: 1.8rem; }
   }
 </style>

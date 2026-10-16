@@ -1,4 +1,5 @@
 // Everything personal lives here: name, links, projects, credits.
+import type { IconName } from '../lib/icons';
 
 export type Link = { label: string; href: string };
 
@@ -20,6 +21,8 @@ export type Project = {
   links?: Link[];
   /** Accent color (hex). */
   color: string;
+  /** Its moon's icon (src/lib/icons.ts). */
+  icon: IconName;
 };
 
 /**
@@ -33,6 +36,8 @@ export type Widget = {
   summary: string;
   /** Accent color (hex). The markets widget recolors itself by mood. */
   color: string;
+  /** Its moon's icon (src/lib/icons.ts). */
+  icon: IconName;
 };
 
 export type WidgetKind = Widget['kind'];
@@ -48,7 +53,7 @@ export const site = {
   // The one sentence that says what you do (hero).
   headline: 'I build AI products and robots.',
   // The proof, right under it. Keep it to two short sentences.
-  intro: 'Co-founded Skoll (€0 → €160K ARR in four months), researched drone swarms that fly in formation, and won an OpenAI hackathon. Based in Madrid.',
+  intro: 'Co-founded Skoll (€0 → €160K ARR in four months). Based in Madrid.',
   location: 'Madrid, Spain',
   description: 'Luis Gomez-Acebo builds AI products and robots: co-founder of Skoll, drone-swarm researcher, OpenAI hackathon winner. Based in Madrid.',
 } as const;
@@ -77,6 +82,7 @@ export const projects: Project[] = [
     tags: ['AI agents', 'React', 'FastAPI', 'AWS'],
     links: [{ label: 'useskoll.com', href: 'https://useskoll.com' }],
     color: '#38bdf8',
+    icon: 'rocket',
   },
   {
     title: 'UAV Swarm',
@@ -93,6 +99,7 @@ export const projects: Project[] = [
     ],
     tags: ['ROS 2', 'Computer vision', 'SLAM', 'C++', 'Python'],
     color: '#a3e635',
+    icon: 'drone',
   },
   {
     title: 'Fiscochat',
@@ -107,6 +114,7 @@ export const projects: Project[] = [
     ],
     tags: ['LangChain', 'RAG', 'OpenAI API'],
     color: '#fb923c',
+    icon: 'scale',
   },
   {
     title: 'Mister Manager',
@@ -121,14 +129,15 @@ export const projects: Project[] = [
     ],
     tags: ['Django', 'React Native', 'PostgreSQL'],
     color: '#f472b6',
+    icon: 'football',
   },
 ];
 
 /** Off-the-clock objects, in display order. */
 export const widgets: Widget[] = [
-  { kind: 'markets', title: 'Markets', summary: "The toaster's mood follows crypto", color: '#94a3b8' },
-  { kind: 'chess', title: 'Chess', summary: "Beat the toaster's daily puzzle", color: '#cbd5e1' },
-  { kind: 'basketball', title: 'Toast-ketball', summary: 'Flick toast into the slot', color: '#fb923c' },
+  { kind: 'markets', title: 'Markets', summary: "The toaster's mood follows crypto", color: '#94a3b8', icon: 'candles' },
+  { kind: 'chess', title: 'Chess', summary: "Beat the toaster's daily puzzle", color: '#cbd5e1', icon: 'knight' },
+  { kind: 'basketball', title: 'Toast-ketball', summary: 'Flick toast into the slot', color: '#fb923c', icon: 'basketball' },
 ];
 
 /** Coins the Markets widget tracks (CoinGecko ids). Their average 24h move sets the toaster's mood. */

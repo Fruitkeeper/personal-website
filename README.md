@@ -22,14 +22,14 @@ Everything personal is in `src/config/site.ts`:
 
 - `site` — name, the one-line `headline` (what you do) and `intro` (the proof) in the hero.
 - `contact` — GitHub, LinkedIn, X, email. **LinkedIn and X are placeholders (`your-handle`).**
-- `projects` — the inner orbit (moons with crest letters), most important first: role, period, description, highlights, tags, public links. Each opens a panel; the About page lists them too.
+- `projects` — the inner orbit (moons with line icons from `src/lib/icons.ts`), most important first: role, period, description, highlights, tags, public links. Each opens a panel; the About page lists them too.
 - `widgets` — the outer orbit: interests (`markets`, `chess`, `basketball`) that open playable panels, with `markets.coins` and `chess.chesscom` settings.
 - `about` — the About page: intro, experience, education, tools & languages. Phone number deliberately excluded (tested).
 - `credits` — third-party attribution (currently only a `<meta name="attribution">`).
 
 ## Pieces
 
-- **Home** (`src/pages/index.astro`): `SiteNav` → `Hero` (copy + compact `Contact` + `Toaster` with `Moons` orbiting) → `Panels` (every dialog the moons open).
+- **Home** (`src/pages/index.astro`): `Hero` (copy + compact `Contact` + `Toaster` with `Moons` orbiting) → `Panels` (every dialog the moons open).
 - **Orbit** (`src/components/Moons.astro`, `src/scripts/orbit.ts`, math + tests in `src/lib/orbit.ts`): projects on the inner ring, interests on the outer (slower, reversed). Labels always visible; hover/focus or an open panel stops it; pauses offscreen; static under reduced motion.
 - **Panels**: one shell (`src/components/Panel.astro`) around each body in `src/components/panels/`; opened by `src/scripts/dialogs.ts`.
 - **Toaster reactions**: window events `toaster:mood` (markets) and `toaster:hop` (a Toast-ketball make, a solved puzzle).
