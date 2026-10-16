@@ -137,10 +137,13 @@ export const markets = {
   coins: ['bitcoin', 'ethereum'],
 } as const;
 
-/** Chess widget. Set your Lichess username to show your ratings (empty hides them). */
+/**
+ * Chess widget. The daily puzzle comes from Lichess (no account needed); set
+ * your chess.com username to show your ratings under it (empty hides them).
+ */
 export const chess = {
-  // TODO: your Lichess username.
-  lichess: '',
+  // TODO: your chess.com username.
+  chesscom: '',
 } as const;
 
 export const credits: Credit[] = [

@@ -3,6 +3,7 @@
 // chess.js never weighs on the initial page. Puzzle logic: src/lib/chess-puzzle.ts.
 import { Chess, type Square } from 'chess.js';
 import { parsePuzzle, playReply, prettyTheme, promotionFor, splitUci, tryMove, type Puzzle } from '../lib/chess-puzzle';
+import { formatChessComStats, statsUrl } from '../lib/chesscom';
 import { HOP_EVENT } from '../lib/toaster';
 import { fetchDailyRaw, markSolved } from './chess';
 
@@ -21,13 +22,8 @@ async function loadPuzzle(): Promise<Puzzle> {
 }
 
 async function loadRating(user: string): Promise<string | null> {
-  const res = await fetch(`https://lichess.org/api/user/${encodeURIComponent(user)}`, { headers: { accept: 'application/json' } });
-  if (!res.ok) return null;
-  const perfs = (await res.json())?.perfs ?? {};
-  const parts = (['puzzle', 'blitz', 'rapid'] as const)
-    .filter((k) => typeof perfs[k]?.rating === 'number')
-    .map((k) => `${k} ${perfs[k].rating}`);
-  return parts.length ? `My Lichess ratings: ${parts.join(' · ')}` : null;
+  const res = await fetch(statsUrl(user), { headers: { accept: 'application/json' } });
+  return res.ok ? formatChessComStats(await res.json()) : null;
 }
 
 export function setupChess(root: HTMLElement, dialog: HTMLDialogElement) {
@@ -186,7 +182,7 @@ export function setupChess(root: HTMLElement, dialog: HTMLDialogElement) {
       meta.textContent = "Couldn't reach Lichess right now. Try the daily puzzle there instead.";
       link.href = 'https://lichess.org/training/daily';
     }
-    const user = root.dataset.lichess;
+    const user = root.dataset.chesscom;
     if (user) {
       loadRating(user)
         .then((text) => {

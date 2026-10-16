@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { CHESSCOM_USERNAME } from '../src/lib/chesscom';
 import { about, chess, contact, credits, markets, projects, site, widgets } from '../src/config/site';
 
 const HEX = /^#[0-9a-f]{6}$/i;
@@ -67,8 +68,8 @@ describe('markets config', () => {
 });
 
 describe('chess config', () => {
-  it('has an empty or plausible Lichess username', () => {
-    expect(chess.lichess).toMatch(/^([A-Za-z0-9_-]{2,30})?$/);
+  it('has an empty or valid chess.com username', () => {
+    if (chess.chesscom) expect(chess.chesscom).toMatch(CHESSCOM_USERNAME);
   });
 });
 
