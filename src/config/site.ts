@@ -50,10 +50,6 @@ export type Credit = { work: string; author: string; href: string; license: stri
 
 export const site = {
   name: 'Luis Gomez-Acebo',
-  // The one sentence that says what you do (hero).
-  headline: 'I build AI products and robots.',
-  // The proof, right under it. Keep it to two short sentences.
-  intro: 'Co-founded Skoll (€0 → €160K ARR in four months). Based in Madrid.',
   location: 'Madrid, Spain',
   description: 'Luis Gomez-Acebo builds AI products and robots: co-founder of Skoll, drone-swarm researcher, OpenAI hackathon winner. Based in Madrid.',
 } as const;

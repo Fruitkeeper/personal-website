@@ -20,7 +20,7 @@ One screen that says who I am — name, what I do, the proof, contact — next t
 
 Everything personal is in `src/config/site.ts`:
 
-- `site` — name, the one-line `headline` (what you do) and `intro` (the proof) in the hero.
+- `site` — name (the hero), location, and the meta `description` used for search and link previews.
 - `contact` — GitHub, LinkedIn, X, email. **LinkedIn and X are placeholders (`your-handle`).**
 - `projects` — the inner orbit (moons with line icons from `src/lib/icons.ts`), most important first: role, period, description, highlights, tags, public links. Each opens a panel; the About page lists them too.
 - `widgets` — the outer orbit: interests (`markets`, `chess`, `basketball`) that open playable panels, with `markets.coins` and `chess.chesscom` settings.

@@ -5,11 +5,8 @@ import { about, chess, contact, credits, markets, projects, site, widgets } from
 const HEX = /^#[0-9a-f]{6}$/i;
 
 describe('site', () => {
-  it('has a name, headline, intro and description', () => {
+  it('has a name and description', () => {
     expect(site.name).toBeTruthy();
-    expect(site.headline.length).toBeLessThanOrEqual(60);
-    expect(site.intro.length).toBeGreaterThan(0);
-    expect(site.intro.length).toBeLessThanOrEqual(220);
     expect(site.description).toBeTruthy();
   });
 });
