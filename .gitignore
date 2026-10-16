@@ -26,3 +26,4 @@ pnpm-debug.log*
 # Source 3D asset (4.4MB). The optimized copy served by the site is public/models/sad-toaster.glb,
 # built with: npm run build:model (tools/build-model.mjs)
 /sad_toaster.glb
+.vercel
