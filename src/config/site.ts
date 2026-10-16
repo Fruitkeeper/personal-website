@@ -55,8 +55,7 @@ export const site = {
 
 export const contact = {
   github: 'https://github.com/Fruitkeeper',
-  // TODO: replace with your LinkedIn profile URL.
-  linkedin: 'https://www.linkedin.com/in/your-handle',
+  linkedin: 'https://www.linkedin.com/in/luis-gomez-acebo-martin-retortillo/',
   x: 'https://x.com/Fruitkeeperr',
   email: 'gomez.acebo.luis@gmail.com',
 } as const;
