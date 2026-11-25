@@ -1,7 +1,6 @@
 ---
 import { site } from '../config/site';
 import Toaster from './Toaster.astro';
-import Moons from './Moons.astro';
 import Contact from './Contact.astro';
 
 // First name on its own line, so a long surname never breaks at a hyphen.
@@ -16,18 +15,10 @@ const last = rest.join(' ');
       <span>{first}</span>
       {last && <span class="last">{last}</span>}
     </h1>
-    <p class="explore">
-      <span class="pulse" aria-hidden="true"></span>
-      Click anything in orbit to dive in.
-    </p>
-    <div class="actions">
-      <a class="btn primary" href="/about">More about me <span aria-hidden="true">→</span></a>
-    </div>
     <Contact />
   </div>
   <div class="stage">
     <Toaster />
-    <Moons />
   </div>
 </section>
 
@@ -47,15 +38,11 @@ const last = rest.join(' ');
   .copy > * { animation: rise 0.9s var(--ease-out) both; }
   .copy > :nth-child(2) { animation-delay: 0.06s; }
   .copy > :nth-child(3) { animation-delay: 0.12s; }
-  .copy > :nth-child(4) { animation-delay: 0.18s; }
-  .copy > :nth-child(5) { animation-delay: 0.24s; }
-  .copy > :nth-child(6) { animation-delay: 0.3s; }
-  .copy > :nth-child(7) { animation-delay: 0.36s; }
   @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
 
   .hello { margin: 0 0 0.6rem; font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent-2); }
   h1 {
-    margin: 0;
+    margin: 0 0 1.6rem;
     font-size: clamp(2.6rem, 6vw, 4.8rem);
     line-height: 0.95;
     letter-spacing: -0.04em;
@@ -67,39 +54,11 @@ const last = rest.join(' ');
   h1 span { display: block; }
   .last { white-space: nowrap; }
 
-  .explore {
-    display: flex;
-    gap: 0.6rem;
-    align-items: baseline;
-    margin: 1.6rem 0 0;
-    max-width: 32rem;
-    font-size: 0.92rem;
-    color: var(--text);
-  }
-  /* A small beacon pointing the eye at the orbit. */
-  .pulse { flex: none; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 0 0 rgb(34 211 238 / 0.6); animation: pulse 2s infinite; translate: 0 -1px; }
-  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgb(34 211 238 / 0); } 100% { box-shadow: 0 0 0 0 rgb(34 211 238 / 0); } }
-
-  .actions { margin: 1.6rem 0 1.1rem; }
-  .btn {
-    display: inline-flex;
-    gap: 0.4rem;
-    padding: 0.75rem 1.3rem;
-    border-radius: 999px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: transform 0.25s var(--ease-out), box-shadow 0.25s;
-  }
-  .primary { background: var(--gradient); color: #fff; box-shadow: 0 10px 30px -10px rgb(124 92 255 / 0.7); }
-  .primary:hover { transform: translateY(-2px); color: #fff; box-shadow: 0 14px 36px -10px rgb(124 92 255 / 0.9); }
-  .btn span { transition: translate 0.3s var(--ease-out); }
-  .btn:hover span { translate: 3px 0; }
-
   .stage { position: relative; height: min(74dvh, 42rem); }
 
   @media (max-width: 899.98px) {
     .hero { grid-template-columns: 1fr; min-height: auto; gap: 0; padding-top: 1.5rem; }
     .stage { height: 52svh; order: -1; margin: -0.5rem 0 0.5rem; }
   }
-  @media (prefers-reduced-motion: reduce) { .copy > *, .pulse { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .copy > * { animation: none; } }
 </style>

@@ -1,6 +1,6 @@
 # Personal website
 
-One screen that says who I am — name, what I do, the proof, contact — next to a 3D toaster robot that watches your cursor. My projects and interests orbit him; click one to dive in. The full story lives on the About page. Built with Astro; deployed on Vercel.
+One screen: my name and socials next to a 3D toaster robot that watches your cursor. Built with Astro; deployed on Vercel.
 
 > The earlier full site (header, projects, blog, about, RSS) is preserved at the git tag `full-site-before-strip`:
 > `git checkout full-site-before-strip -- src tests` restores its files.
@@ -21,19 +21,13 @@ One screen that says who I am — name, what I do, the proof, contact — next t
 Everything personal is in `src/config/site.ts`:
 
 - `site` — name (the hero), location, and the meta `description` used for search and link previews.
-- `contact` — GitHub, LinkedIn, X, email. **LinkedIn and X are placeholders (`your-handle`).**
-- `projects` — the inner orbit (moons with line icons from `src/lib/icons.ts`), most important first: role, period, description, highlights, tags, public links. Each opens a panel; the About page lists them too.
-- `widgets` — the outer orbit: interests (`markets`, `chess`, `basketball`) that open playable panels, with `markets.coins` and `chess.chesscom` settings.
-- `about` — the About page: intro, experience, education, tools & languages. Phone number deliberately excluded (tested).
+- `contact` — GitHub, LinkedIn, X, email.
 - `credits` — third-party attribution (currently only a `<meta name="attribution">`).
 
 ## Pieces
 
-- **Home** (`src/pages/index.astro`): `Hero` (copy + compact `Contact` + `Toaster` with `Moons` orbiting) → `Panels` (every dialog the moons open).
-- **Orbit** (`src/components/Moons.astro`, `src/scripts/orbit.ts`, math + tests in `src/lib/orbit.ts`): projects on the inner ring, interests on the outer (slower, reversed). Labels always visible; hover/focus or an open panel stops it; pauses offscreen; static under reduced motion.
-- **Panels**: one shell (`src/components/Panel.astro`) around each body in `src/components/panels/`; opened by `src/scripts/dialogs.ts`.
-- **Toaster reactions**: window events `toaster:mood` (markets) and `toaster:hop` (a Toast-ketball make, a solved puzzle).
-- **External data**: CoinGecko, Lichess (daily puzzle) and chess.com (ratings) public APIs from the browser (no keys); panels degrade gracefully offline.
+- **Home** (`src/pages/index.astro`): `Stars` background + `Hero` (name, `Contact`, `Toaster`).
+- **Contact** (`src/components/Contact.astro`, `src/scripts/contact.ts`): click-to-copy email and social icons with a magnetic hover (math in `src/lib/magnet.ts`).
 
 ## The toaster
 
